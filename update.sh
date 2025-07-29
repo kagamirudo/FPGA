@@ -1,0 +1,111 @@
+#!/bin/bash
+
+# Default directory
+DEFAULT_DIR="/mnt/d/Materials/Study/HLS"
+
+# Function to display usage
+usage() {
+    echo "Usage: $0 [folder_name]"
+    echo "  folder_name: Optional name of a folder in the default directory"
+    echo "  If no argument is provided, you will be prompted to enter a folder name"
+    echo "  Default directory: $DEFAULT_DIR"
+}
+
+# Function to copy folder and sync with origin
+copy_and_sync() {
+    local folder_name="$1"
+    local source_dir="$DEFAULT_DIR/$folder_name"
+    local target_dir="$folder_name"
+    
+    echo "Source directory: $source_dir"
+    echo "Target directory: $target_dir"
+    
+    # Check if source directory exists
+    if [ ! -d "$source_dir" ]; then
+        echo "Error: Folder '$folder_name' does not exist in '$DEFAULT_DIR'!"
+        exit 1
+    fi
+    
+    # Check if target directory already exists
+    if [ -d "$target_dir" ]; then
+        echo "Folder '$target_dir' already exists. Updating with rsync..."
+        rsync -av --delete "$source_dir/" "$target_dir/"
+        
+        if [ $? -eq 0 ]; then
+            echo "Successfully updated folder: $target_dir"
+        else
+            echo "Error: Failed to update folder with rsync!"
+            exit 1
+        fi
+    else
+        # Copy the folder to current directory
+        echo "Copying folder to current directory..."
+        cp -r "$source_dir" .
+        
+        if [ $? -eq 0 ]; then
+            echo "Successfully copied folder to: $target_dir"
+        else
+            echo "Error: Failed to copy folder!"
+            exit 1
+        fi
+    fi
+    
+    # Add to git if this is a git repository
+    if [ -d ".git" ]; then
+        echo "Adding to git..."
+        git add "$target_dir"
+        
+        # Commit the changes
+        echo "Committing changes..."
+        git commit -m "Add folder: $target_dir"
+        
+        # Push to origin
+        echo "Pushing to origin..."
+        git push origin $(git branch --show-current)
+        
+        if [ $? -eq 0 ]; then
+            echo "Successfully synced with origin!"
+        else
+            echo "Warning: Failed to push to origin. You may need to pull first or resolve conflicts."
+        fi
+    else
+        echo "Warning: Not a git repository. Skipping git operations."
+    fi
+}
+
+# Main script logic
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    usage
+    exit 0
+fi
+
+# If argument is provided, use it
+if [ $# -eq 1 ]; then
+    folder_name="$1"
+    echo "Using provided folder name: $folder_name"
+else
+    # Prompt for folder name
+    echo "No folder name provided."
+    echo "Default directory: $DEFAULT_DIR"
+    read -p "Enter folder name from default directory (or press Enter to list available folders): " user_input
+    
+    if [ -z "$user_input" ]; then
+        echo "Available folders in $DEFAULT_DIR:"
+        if [ -d "$DEFAULT_DIR" ]; then
+            ls -1 "$DEFAULT_DIR" | grep -E '^[^.]' | head -20
+            echo "..."
+        else
+            echo "Default directory does not exist: $DEFAULT_DIR"
+            exit 1
+        fi
+        read -p "Enter folder name to copy: " folder_name
+    else
+        folder_name="$user_input"
+        echo "Using user input: $folder_name"
+    fi
+fi
+
+# Execute the copy and sync operation
+copy_and_sync "$folder_name"
+
+echo "Script completed successfully!"
