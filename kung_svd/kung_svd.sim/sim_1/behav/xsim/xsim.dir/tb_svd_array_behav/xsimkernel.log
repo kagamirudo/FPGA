@@ -2,3 +2,6 @@ Running: xsim.dir/tb_svd_array_behav/xsimk.exe -simmode gui -wdb tb_svd_array_be
 Design successfully loaded
 Design Loading Memory Usage: 10984 KB (Peak: 10984 KB)
 Design Loading CPU Usage: 15 ms
+Simulation completed
+Simulation Memory Usage: 13488 KB (Peak: 13488 KB)
+Simulation CPU Usage: 468 ms

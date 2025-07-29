@@ -4,7 +4,7 @@ use IEEE.NUMERIC_STD.all;
 use work.svd_pkg.all;
 
 ----------------------------------------------------------------------------
---  ROWS×COLS systolic grid  (controller stubbed – add your own logic)
+--  ROWS×COLS systolic grid with Jacobi Controller
 ----------------------------------------------------------------------------
 entity svd_array is
   generic (
@@ -36,6 +36,14 @@ end svd_array;
 architecture Behavioral of svd_array is
   type data_mat is array (natural range <>, natural range <>) of data_t;
   signal a_bus, b_bus, c_bus, s_bus : data_mat(0 to ROWS, 0 to COLS);
+  
+  -- Controller signals
+  signal ctrl_start, ctrl_done : std_logic;
+  signal ctrl_ain, ctrl_bin    : data_t;
+  signal ctrl_c, ctrl_s        : data_t;
+  
+  -- Matrix edge signals for controller input
+  signal edge_a, edge_b : data_t;
 begin
   --------------------------------------------------------------------------
   -- PE grid generation
@@ -60,9 +68,59 @@ begin
     end generate;
   end generate;
 
-  -- TODO: implement controller + I/O muxing.
+  --------------------------------------------------------------------------
+  -- Instantiate Jacobi Controller
+  --------------------------------------------------------------------------
+  u_ctrl : entity work.jacobi_ctrl
+    generic map(
+      COLS   => COLS,
+      DATA_W => DATA_W,
+      SWEEPS => 8
+    )
+    port map(
+      clk    => clk,
+      rst_n  => rst_n,
+      start  => ctrl_start,
+      done   => ctrl_done,
+      ain    => ctrl_ain,
+      bin    => ctrl_bin,
+      c_out  => ctrl_c,
+      s_out  => ctrl_s
+    );
+
+  --------------------------------------------------------------------------
+  -- Controller Integration Logic
+  --------------------------------------------------------------------------
+  -- Connect controller to matrix edge
+  ctrl_ain <= a_bus(0, 0);  -- Top-left element
+  ctrl_bin <= a_bus(0, 1);  -- Top-left+1 element
+  
+  -- Broadcast controller outputs to all PEs
+  gen_ctrl_row : for i in 0 to ROWS - 1 generate
+    gen_ctrl_col : for j in 0 to COLS - 1 generate
+      c_bus(i, j) <= ctrl_c;
+      s_bus(i, j) <= ctrl_s;
+    end generate;
+  end generate;
+
+  --------------------------------------------------------------------------
+  -- Control Logic
+  --------------------------------------------------------------------------
+  process (clk)
+  begin
+    if rising_edge(clk) then
+      if rst_n = '0' then
+        ctrl_start <= '0';
+        done       <= '0';
+      else
+        ctrl_start <= start;
+        done       <= ctrl_done;
+      end if;
+    end if;
+  end process;
+
+  -- TODO: implement I/O muxing for matrix loading/unloading
   dout       <= (others => '0');
   dout_valid <= '0';
   dout_last  <= '0';
-  done       <= '0';
 end Behavioral; 
