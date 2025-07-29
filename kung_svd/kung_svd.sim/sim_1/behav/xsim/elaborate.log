@@ -1,0 +1,21 @@
+Vivado Simulator v2025.1.0
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+Running: C:/Xilinx/2025.1/Vivado/bin/unwrapped/win64.o/xelab.exe --incr --debug typical --relax --mt 2 -L xil_defaultlib -L secureip --snapshot tb_svd_array_behav xil_defaultlib.tb_svd_array -log elaborate.log 
+Using 2 slave threads.
+Starting static elaboration
+Completed static elaboration
+Starting simulation data flow analysis
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling package std.standard
+Compiling package std.textio
+Compiling package ieee.std_logic_1164
+Compiling package ieee.numeric_std
+Compiling package xil_defaultlib.svd_pkg
+Compiling architecture rtl of entity xil_defaultlib.svd_pe [\svd_pe(data_w=18)\]
+Compiling architecture behavioral of entity xil_defaultlib.svd_array [\svd_array(data_w=18)\]
+Compiling architecture rtl of entity xil_defaultlib.svd_axi_stream [\svd_axi_stream(data_w=18)\]
+Compiling architecture behavioral of entity xil_defaultlib.svd_array_top [\svd_array_top(data_w=18)\]
+Compiling architecture rtl of entity xil_defaultlib.tb_svd_array
+Built simulation snapshot tb_svd_array_behav

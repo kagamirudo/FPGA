@@ -1,0 +1,10 @@
+0.7
+2020.2
+May 22 2025
+00:13:55
+D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd,1753790111,vhdl,,,,tb_svd_array,,,,,,,,
+D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array.vhd,1753788759,vhdl,D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd,,,svd_array_top,,,,,,,,
+D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd,1753788679,vhdl,D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_axi_stream.vhd,,,svd_array,,,,,,,,
+D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_axi_stream.vhd,1753788707,vhdl,D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array.vhd,,,svd_axi_stream,,,,,,,,
+D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_pe.vhd,1753788671,vhdl,D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd,,,svd_pe,,,,,,,,
+D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_pkg.vhd,1753788648,vhdl,D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd;D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array.vhd;D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd;D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_axi_stream.vhd;D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_pe.vhd,,,svd_pkg,,,,,,,,

@@ -1,0 +1,4 @@
+INFO: [VRFC 10-163] Analyzing VHDL file "D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array.vhd" into library xil_defaultlib
+INFO: [VRFC 10-3107] analyzing entity 'svd_array_top'
+INFO: [VRFC 10-163] Analyzing VHDL file "D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd" into library xil_defaultlib
+INFO: [VRFC 10-3107] analyzing entity 'tb_svd_array'

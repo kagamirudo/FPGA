@@ -1,0 +1,1 @@
+--incr --debug "typical" --relax --mt "2" -L "xil_defaultlib" -L "secureip" --snapshot "svd_axi_stream_behav" "xil_defaultlib.svd_axi_stream" -log "elaborate.log" 

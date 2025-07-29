@@ -1,0 +1,11 @@
+# compile vhdl design source files
+vhdl xil_defaultlib  \
+"../../../../kung_svd.srcs/sources_1/new/svd_pkg.vhd" \
+"../../../../kung_svd.srcs/sources_1/new/svd_pe.vhd" \
+"../../../../kung_svd.srcs/sources_1/new/svd_array_core.vhd" \
+"../../../../kung_svd.srcs/sources_1/new/svd_axi_stream.vhd" \
+"../../../../kung_svd.srcs/sources_1/new/svd_array.vhd" \
+"../../../../kung_svd.srcs/sim_1/new/tb_svd_array.vhd" \
+
+# Do not sort compile order
+nosort
