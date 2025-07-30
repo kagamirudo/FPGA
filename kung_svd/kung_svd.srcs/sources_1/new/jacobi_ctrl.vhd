@@ -42,6 +42,7 @@ architecture rtl of jacobi_ctrl is
     port (
       clk       : in std_logic;
       rst_n     : in std_logic;
+      start     : in std_logic;  -- Start new computation
       x_in      : in data_t;
       y_in      : in data_t;
       x_out     : out data_t; -- cos
@@ -55,6 +56,7 @@ architecture rtl of jacobi_ctrl is
   signal busy               : std_logic                   := '0';
   signal cordic_c, cordic_s : data_t;
   signal cordic_valid       : std_logic;
+  signal cordic_start       : std_logic                   := '0';
 begin
   ------------------------------------------------------------------
   -- Controller FSM: IDLE → PAIR → CORDIC → BROADCAST → next pair
@@ -73,20 +75,30 @@ begin
           busy      <= '1';
           sweep_cnt <= 0;
           pair_idx  <= 0;
+          cordic_start <= '1';
+          report "Jacobi Controller: Starting computation" severity note;
         elsif busy = '1' then
+          cordic_start <= '0';
           -- iterate over column pairs
           if cordic_valid = '1' then
             -- broadcast C,S for one full column (array consumes)
             c_out <= cordic_c;
             s_out <= cordic_s;
+            report "Jacobi Controller: Received CORDIC result, pair_idx=" & integer'image(pair_idx) & 
+                   ", sweep_cnt=" & integer'image(sweep_cnt) severity note;
             if pair_idx < COLS - 2 then
               pair_idx <= pair_idx + 2;
+              cordic_start <= '1';  -- Start next CORDIC computation
             else
               pair_idx  <= 1;
               sweep_cnt <= sweep_cnt + 1;
+              report "Jacobi Controller: Completed sweep " & integer'image(sweep_cnt) severity note;
               if sweep_cnt = SWEEPS - 1 then
                 busy <= '0';
                 done <= '1';
+                report "Jacobi Controller: Computation completed" severity note;
+              else
+                cordic_start <= '1';  -- Start next CORDIC computation for next sweep
               end if;
             end if;
           end if;
@@ -104,6 +116,7 @@ begin
   (
     clk       => clk,
     rst_n     => rst_n,
+    start     => cordic_start,
     x_in      => ain,
     y_in      => bin,
     x_out     => cordic_c,

@@ -34,8 +34,14 @@ entity svd_array is
 end svd_array;
 
 architecture Behavioral of svd_array is
+  -- Define the matrix type with proper bounds
   type data_mat is array (natural range <>, natural range <>) of data_t;
-  signal a_bus, b_bus, c_bus, s_bus : data_mat(0 to ROWS, 0 to COLS);
+  
+  -- Declare signal arrays with proper bounds
+  signal a_bus : data_mat(0 to ROWS, 0 to COLS);
+  signal b_bus : data_mat(0 to ROWS, 0 to COLS);
+  signal c_bus : data_mat(0 to ROWS, 0 to COLS);
+  signal s_bus : data_mat(0 to ROWS, 0 to COLS);
 
   -- Controller signals
   signal ctrl_start, ctrl_done : std_logic;
@@ -51,7 +57,7 @@ architecture Behavioral of svd_array is
   signal load_cnt, unload_cnt            : integer range 0 to ROWS * COLS;
   signal matrix_loaded, computation_done : std_logic;
 
-  -- Matrix storage for loading/unloading
+  -- Matrix storage for loading/unloading with proper bounds
   signal input_matrix  : data_mat(0 to ROWS - 1, 0 to COLS - 1);
   signal output_matrix : data_mat(0 to ROWS - 1, 0 to COLS - 1);
 
@@ -103,9 +109,21 @@ begin
   --------------------------------------------------------------------------
   -- Controller Integration Logic
   --------------------------------------------------------------------------
-  -- Connect controller to matrix edge
-  ctrl_ain <= a_bus(0, 0); -- Top-left element
-  ctrl_bin <= a_bus(0, 1); -- Top-left+1 element
+  -- Connect controller to matrix edge - use input matrix data
+  ctrl_ain <= input_matrix(0, 0);
+  ctrl_bin <= input_matrix(0, 1);
+  
+  -- Debug: Report controller input values
+  process (clk)
+  begin
+    if rising_edge(clk) then
+      if matrix_loaded = '1' then
+        report "Controller inputs: ain=" & integer'image(to_integer(ctrl_ain)) & 
+               ", bin=" & integer'image(to_integer(ctrl_bin)) & 
+               ", ctrl_start=" & std_logic'image(ctrl_start) severity note;
+      end if;
+    end if;
+  end process;
 
   -- Broadcast controller outputs to all PEs
   gen_ctrl_row : for i in 0 to ROWS - 1 generate
@@ -141,11 +159,15 @@ begin
             if din_valid = '1' then
               -- Store input data in matrix (row-major order)
               input_matrix(load_cnt / COLS, load_cnt mod COLS) <= din;
-              load_cnt                                         <= load_cnt + 1;
+              report "Systolic Array: Received data " & integer'image(load_cnt) & " = " & integer'image(to_integer(din)) severity note;
+
+              -- Check if this is the last element before incrementing
               if load_cnt = ROWS * COLS - 1 then
                 matrix_loaded <= '1';
                 report "Matrix loaded successfully" severity note;
               end if;
+
+              load_cnt <= load_cnt + 1;
             end if;
 
           when COMPUTE =>
@@ -178,21 +200,25 @@ begin
       when IDLE =>
         if din_valid = '1' then
           io_next_state <= LOAD;
+          report "Systolic Array: Moving from IDLE to LOAD" severity note;
         end if;
 
       when LOAD =>
-        if din_last = '1' and din_valid = '1' then
+        if matrix_loaded = '1' then
           io_next_state <= COMPUTE;
+          report "Systolic Array: Moving from LOAD to COMPUTE" severity note;
         end if;
 
       when COMPUTE =>
         if computation_done = '1' then
           io_next_state <= UNLOAD;
+          report "Systolic Array: Moving from COMPUTE to UNLOAD" severity note;
         end if;
 
       when UNLOAD =>
         if unload_cnt = ROWS * COLS - 1 and dout_ready = '1' then
           io_next_state <= IDLE;
+          report "Systolic Array: Moving from UNLOAD to IDLE" severity note;
         end if;
     end case;
   end process;
@@ -209,6 +235,8 @@ begin
           for j in 0 to COLS loop
             a_bus(i, j) <= (others => '0');
             b_bus(i, j) <= (others => '0');
+            c_bus(i, j) <= (others => '0');
+            s_bus(i, j) <= (others => '0');
           end loop;
         end loop;
       elsif io_state = LOAD and matrix_loaded = '1' then
@@ -289,12 +317,12 @@ begin
         done       <= '0';
       else
         -- Start controller when matrix is loaded
-        if io_state = LOAD and matrix_loaded = '1' then
+        if matrix_loaded = '1' and ctrl_start = '0' and ctrl_done = '0' then
           ctrl_start <= '1';
+          report "Systolic Array: Starting Jacobi controller" severity note;
         else
           ctrl_start <= '0';
         end if;
-
         -- Signal completion when unloading is done
         if io_state = UNLOAD and unload_cnt = ROWS * COLS - 1 and dout_ready = '1' then
           done <= '1';

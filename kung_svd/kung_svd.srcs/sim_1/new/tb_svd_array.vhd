@@ -84,12 +84,14 @@ begin
   ------------------------------------------------------------------
   clk_gen : process
   begin
+    report "TB: Clock generation started" severity note;
     while not (stim_done or timeout_done) loop
       aclk <= '0';
       wait for CLK_PERIOD/2;
       aclk <= '1';
       wait for CLK_PERIOD/2;
     end loop;
+    report "TB: Clock generation stopped" severity note;
     wait;
   end process;
 
@@ -104,6 +106,8 @@ begin
     aresetn <= '1';
     wait for 2 * CLK_PERIOD;
 
+    report "TB: Starting to send data" severity note;
+
     -- send matrix row-major
     for i in 1 to ROWS_C * COLS_C loop
       s_axis_tdata  <= std_logic_vector(to_signed(i, DATA_WIDTH));
@@ -114,6 +118,7 @@ begin
         s_axis_tlast <= '0';
       end if;
 
+      report "TB: Sending data " & integer'image(i) & ", s_axis_tready = " & std_logic'image(s_axis_tready) severity note;
       -- wait for ready on a rising edge
       wait until rising_edge(aclk) and s_axis_tready = '1';
     end loop;
@@ -123,10 +128,12 @@ begin
     s_axis_tlast  <= '0';
     s_axis_tdata  <= (others => '0');
 
+    report "TB: Finished sending data, waiting for computation" severity note;
+
     ----------------------------------------------------------------
     -- give the core plenty of time to compute and drain
     ----------------------------------------------------------------
-    wait for 5 us;
+    wait for 50 us;
     stim_done <= true;
     report "TB finished - normal exit" severity note;
     -- std.env.stop; -- closes the sim (VHDL-2008 feature)
@@ -158,15 +165,18 @@ begin
   end process;
 
     ------------------------------------------------------------------
-    --  Safety timeout (10 µs)
+    --  Safety timeout (50 µs)
     ------------------------------------------------------------------
     timeout : process
     begin
-      wait for 10 us;
+      report "TB: Timeout process started, will timeout at 50us" severity note;
+      wait for 50 us;
       if not stim_done then
         report "Timeout - simulation forced to finish" severity warning;
         timeout_done <= true;
         -- std.env.stop; -- VHDL-2008 feature
+      else
+        report "TB: Normal completion, timeout not needed" severity note;
       end if;
       wait;
     end process;

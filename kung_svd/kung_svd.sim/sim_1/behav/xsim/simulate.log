@@ -1,4 +1,8 @@
 Time resolution is 1 ps
+Note: TB: Timeout process started, will timeout at 50us
+Time: 0 ps  Iteration: 0  Process: /tb_svd_array/timeout  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: TB: Clock generation started
+Time: 0 ps  Iteration: 0  Process: /tb_svd_array/clk_gen  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 5 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
@@ -13,132 +17,404 @@ Note: Waiting for output data...
 Time: 55 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 65 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: TB: Starting to send data
+Time: 70 ns  Iteration: 0  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: TB: Sending data 1, s_axis_tready = '1'
+Time: 70 ns  Iteration: 0  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: AXI-Stream: Moving to LOAD state
+Time: 70 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/line__126  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_axi_stream.vhd
+Note: TB: Sending data 2, s_axis_tready = '1'
+Time: 75 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 75 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: AXI-Stream: Received data = 2
+Time: 75 ns  Iteration: 2  Process: /tb_svd_array/uut/u_axi_stream/line__126  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_axi_stream.vhd
+Note: Systolic Array: Moving from IDLE to LOAD
+Time: 75 ns  Iteration: 3  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__195  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 3, s_axis_tready = '1'
+Time: 85 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 85 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 0 = 3
+Time: 95 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 4, s_axis_tready = '1'
+Time: 95 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 95 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 1 = 4
+Time: 105 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 5, s_axis_tready = '1'
+Time: 105 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 105 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 2 = 5
+Time: 115 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 6, s_axis_tready = '1'
+Time: 115 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 115 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 3 = 6
+Time: 125 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 7, s_axis_tready = '1'
+Time: 125 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 125 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 4 = 7
+Time: 135 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 8, s_axis_tready = '1'
+Time: 135 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 135 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 5 = 8
+Time: 145 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 9, s_axis_tready = '1'
+Time: 145 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 145 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 6 = 9
+Time: 155 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 10, s_axis_tready = '1'
+Time: 155 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 155 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 7 = 10
+Time: 165 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 11, s_axis_tready = '1'
+Time: 165 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 165 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 8 = 11
+Time: 175 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 12, s_axis_tready = '1'
+Time: 175 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 175 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 9 = 12
+Time: 185 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 13, s_axis_tready = '1'
+Time: 185 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 185 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 10 = 13
+Time: 195 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 14, s_axis_tready = '1'
+Time: 195 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 195 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 11 = 14
+Time: 205 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 15, s_axis_tready = '1'
+Time: 205 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 205 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 12 = 15
+Time: 215 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 16, s_axis_tready = '1'
+Time: 215 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 215 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 13 = 16
+Time: 225 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 17, s_axis_tready = '1'
+Time: 225 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 225 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 14 = 17
+Time: 235 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 18, s_axis_tready = '1'
+Time: 235 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 235 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 15 = 18
+Time: 245 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 19, s_axis_tready = '1'
+Time: 245 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 245 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 16 = 19
+Time: 255 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 20, s_axis_tready = '1'
+Time: 255 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 255 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 17 = 20
+Time: 265 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 21, s_axis_tready = '1'
+Time: 265 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 265 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 18 = 21
+Time: 275 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 22, s_axis_tready = '1'
+Time: 275 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 275 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 19 = 22
+Time: 285 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 23, s_axis_tready = '1'
+Time: 285 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 285 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 20 = 23
+Time: 295 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 24, s_axis_tready = '1'
+Time: 295 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 295 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 21 = 24
+Time: 305 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 25, s_axis_tready = '1'
+Time: 305 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 305 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 22 = 25
+Time: 315 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 26, s_axis_tready = '1'
+Time: 315 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 315 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 23 = 26
+Time: 325 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 27, s_axis_tready = '1'
+Time: 325 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 325 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 24 = 27
+Time: 335 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 28, s_axis_tready = '1'
+Time: 335 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 335 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 25 = 28
+Time: 345 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 29, s_axis_tready = '1'
+Time: 345 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 345 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 26 = 29
+Time: 355 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 30, s_axis_tready = '1'
+Time: 355 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 355 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 27 = 30
+Time: 365 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 31, s_axis_tready = '1'
+Time: 365 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 365 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 28 = 31
+Time: 375 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 32, s_axis_tready = '1'
+Time: 375 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 375 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 29 = 32
+Time: 385 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 33, s_axis_tready = '1'
+Time: 385 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 385 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 30 = 33
+Time: 395 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 34, s_axis_tready = '1'
+Time: 395 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 395 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 31 = 34
+Time: 405 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 35, s_axis_tready = '1'
+Time: 405 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 405 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 32 = 35
+Time: 415 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 36, s_axis_tready = '1'
+Time: 415 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 415 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 33 = 36
+Time: 425 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 37, s_axis_tready = '1'
+Time: 425 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 425 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 34 = 37
+Time: 435 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 38, s_axis_tready = '1'
+Time: 435 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 435 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 35 = 38
+Time: 445 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 39, s_axis_tready = '1'
+Time: 445 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 445 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 36 = 39
+Time: 455 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 40, s_axis_tready = '1'
+Time: 455 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 455 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 37 = 40
+Time: 465 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 41, s_axis_tready = '1'
+Time: 465 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 465 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 38 = 41
+Time: 475 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 42, s_axis_tready = '1'
+Time: 475 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 475 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 39 = 42
+Time: 485 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 43, s_axis_tready = '1'
+Time: 485 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 485 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 40 = 43
+Time: 495 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 44, s_axis_tready = '1'
+Time: 495 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 495 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 41 = 44
+Time: 505 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 45, s_axis_tready = '1'
+Time: 505 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 505 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 42 = 45
+Time: 515 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 46, s_axis_tready = '1'
+Time: 515 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 515 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 43 = 46
+Time: 525 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 47, s_axis_tready = '1'
+Time: 525 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 525 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 44 = 47
+Time: 535 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 48, s_axis_tready = '1'
+Time: 535 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 535 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 45 = 48
+Time: 545 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 49, s_axis_tready = '1'
+Time: 545 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 545 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 46 = 49
+Time: 555 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 50, s_axis_tready = '1'
+Time: 555 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 555 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 47 = 50
+Time: 565 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 51, s_axis_tready = '1'
+Time: 565 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 565 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 48 = 51
+Time: 575 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 52, s_axis_tready = '1'
+Time: 575 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 575 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 49 = 52
+Time: 585 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 53, s_axis_tready = '1'
+Time: 585 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 585 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 50 = 53
+Time: 595 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 54, s_axis_tready = '1'
+Time: 595 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 595 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 51 = 54
+Time: 605 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 55, s_axis_tready = '1'
+Time: 605 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 605 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 52 = 55
+Time: 615 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 56, s_axis_tready = '1'
+Time: 615 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 615 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 53 = 56
+Time: 625 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 57, s_axis_tready = '1'
+Time: 625 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 625 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 54 = 57
+Time: 635 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 58, s_axis_tready = '1'
+Time: 635 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 635 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 55 = 58
+Time: 645 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 59, s_axis_tready = '1'
+Time: 645 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 645 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 56 = 59
+Time: 655 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 60, s_axis_tready = '1'
+Time: 655 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 655 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 57 = 60
+Time: 665 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 61, s_axis_tready = '1'
+Time: 665 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 665 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 58 = 61
+Time: 675 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: TB: Sending data 62, s_axis_tready = '1'
+Time: 675 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 675 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 59 = 62
+Time: 685 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: AXI-Stream: load_cnt = 60, expecting 63
+Time: 685 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/line__102  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_axi_stream.vhd
+Note: TB: Sending data 63, s_axis_tready = '1'
+Time: 685 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 685 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: Systolic Array: Received data 60 = 63
+Time: 695 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: AXI-Stream: load_cnt = 61, expecting 63
+Time: 695 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/line__102  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_axi_stream.vhd
+Note: TB: Sending data 64, s_axis_tready = '1'
+Time: 695 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 695 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
+Note: AXI-Stream: Received data = 64
+Time: 695 ns  Iteration: 2  Process: /tb_svd_array/uut/u_axi_stream/line__126  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_axi_stream.vhd
+Note: AXI-Stream: Starting computation with load_cnt = 62
+Time: 695 ns  Iteration: 2  Process: /tb_svd_array/uut/u_axi_stream/line__126  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_axi_stream.vhd
+Note: Systolic Array: Received data 61 = 64
+Time: 705 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/u_core/line__139  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_array_core.vhd
+Note: AXI-Stream: load_cnt = 62, expecting 63
+Time: 705 ns  Iteration: 1  Process: /tb_svd_array/uut/u_axi_stream/line__102  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sources_1/new/svd_axi_stream.vhd
+Note: TB: Finished sending data, waiting for computation
+Time: 705 ns  Iteration: 1  Process: /tb_svd_array/stim  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...
 Time: 705 ns  Iteration: 1  Process: /tb_svd_array/recv  File: D:/Materials/Study/HLS/kung_svd/kung_svd.srcs/sim_1/new/tb_svd_array.vhd
 Note: Waiting for output data...

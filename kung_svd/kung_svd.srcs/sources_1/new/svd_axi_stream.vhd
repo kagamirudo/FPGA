@@ -108,6 +108,10 @@ begin
       else
         state <= n_state;
         if state = LOAD and s_axis_tvalid = '1' and s_axis_tready_int = '1' then
+          -- Debug: Track data reception
+          if load_cnt >= 60 then -- Near the end
+            report "AXI-Stream: load_cnt = " & integer'image(load_cnt) & ", expecting 63" severity note;
+          end if;
           load_cnt <= load_cnt + 1;
         elsif state = IDLE then
           load_cnt <= 0;
@@ -131,31 +135,43 @@ begin
 
     case state is
       when IDLE =>
+        s_axis_tready_int <= '1'; -- Always ready to accept data in IDLE
         if s_axis_tvalid = '1' then
           n_state <= LOAD;
+          report "AXI-Stream: Moving to LOAD state" severity note;
         end if;
 
       when LOAD =>
         s_axis_tready_int <= '1';
         core_din_valid    <= s_axis_tvalid;
         core_din_last     <= s_axis_tlast;
-        if s_axis_tvalid = '1' and s_axis_tready_int = '1' and s_axis_tlast = '1' then
-          core_start <= '1';
-          n_state    <= COMPUTE;
+        if s_axis_tvalid = '1' and s_axis_tready_int = '1' then
+          -- Debug: Print when we receive data
+          report "AXI-Stream: Received data = " & integer'image(to_integer(signed(s_axis_tdata))) severity note;
+          if s_axis_tlast = '1' then
+            core_start <= '1';
+            n_state    <= COMPUTE;
+            report "AXI-Stream: Starting computation with load_cnt = " & integer'image(load_cnt) severity note;
+          end if;
         end if;
 
       when COMPUTE =>
         -- Wait for computation to complete
         if core_done = '1' then
           n_state <= DRAIN;
+          report "AXI-Stream: Computation done, moving to DRAIN" severity note;
         end if;
 
       when DRAIN =>
         -- Pass through output data from core
         core_dout_ready <= m_axis_tready;
         -- Stay in DRAIN until all data is output
-        if core_dout_valid = '1' and core_dout_last = '1' and m_axis_tready = '1' then
-          n_state <= IDLE;
+        if core_dout_valid = '1' then
+          report "AXI-Stream: Outputting data = " & integer'image(to_integer(core_dout)) severity note;
+          if core_dout_last = '1' and m_axis_tready = '1' then
+            n_state <= IDLE;
+            report "AXI-Stream: All data output, returning to IDLE" severity note;
+          end if;
         end if;
     end case;
   end process;

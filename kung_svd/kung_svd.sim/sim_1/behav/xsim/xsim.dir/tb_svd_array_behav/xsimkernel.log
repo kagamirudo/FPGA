@@ -1,4 +1,4 @@
-Running: xsim.dir/tb_svd_array_behav/xsimk.exe -simmode gui -wdb tb_svd_array_behav.wdb -simrunnum 0 -socket 61750
+Running: xsim.dir/tb_svd_array_behav/xsimk.exe -simmode gui -wdb tb_svd_array_behav.wdb -simrunnum 0 -socket 63489
 Design successfully loaded
-Design Loading Memory Usage: 11232 KB (Peak: 11232 KB)
-Design Loading CPU Usage: 30 ms
+Design Loading Memory Usage: 11256 KB (Peak: 11256 KB)
+Design Loading CPU Usage: 31 ms
