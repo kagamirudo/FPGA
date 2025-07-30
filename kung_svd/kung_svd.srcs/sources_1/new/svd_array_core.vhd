@@ -44,9 +44,10 @@ architecture Behavioral of svd_array is
   signal s_bus : data_mat(0 to ROWS, 0 to COLS);
 
   -- Controller signals
-  signal ctrl_start, ctrl_done : std_logic;
+  signal ctrl_start, ctrl_done, ctrl_valid : std_logic;
   signal ctrl_ain, ctrl_bin    : data_t;
   signal ctrl_c, ctrl_s        : data_t;
+  signal ctrl_col_pivot        : integer range 0 to COLS - 2;
 
   -- Matrix edge signals for controller input
   signal edge_a, edge_b : data_t;
@@ -103,23 +104,25 @@ begin
       ain   => ctrl_ain,
       bin   => ctrl_bin,
       c_out => ctrl_c,
-      s_out => ctrl_s
+      s_out => ctrl_s,
+      col_pivot => ctrl_col_pivot
     );
 
   --------------------------------------------------------------------------
   -- Controller Integration Logic
   --------------------------------------------------------------------------
-  -- Connect controller to matrix edge - use input matrix data
-  ctrl_ain <= input_matrix(0, 0);
-  ctrl_bin <= input_matrix(0, 1);
+  -- Connect controller to matrix edge - use current column pair
+  ctrl_ain <= input_matrix(0, ctrl_col_pivot);
+  ctrl_bin <= input_matrix(0, ctrl_col_pivot + 1);
   
   -- Debug: Report controller input values
   process (clk)
   begin
     if rising_edge(clk) then
-      if matrix_loaded = '1' then
+      if matrix_loaded = '1' and ctrl_start = '1' then
         report "Controller inputs: ain=" & integer'image(to_integer(ctrl_ain)) & 
                ", bin=" & integer'image(to_integer(ctrl_bin)) & 
+               ", col_pivot=" & integer'image(ctrl_col_pivot) &
                ", ctrl_start=" & std_logic'image(ctrl_start) severity note;
       end if;
     end if;
@@ -164,7 +167,7 @@ begin
               -- Check if this is the last element before incrementing
               if load_cnt = ROWS * COLS - 1 then
                 matrix_loaded <= '1';
-                report "Matrix loaded successfully" severity note;
+                report "Matrix loaded successfully with " & integer'image(load_cnt + 1) & " elements" severity note;
               end if;
 
               load_cnt <= load_cnt + 1;
@@ -175,6 +178,11 @@ begin
             if ctrl_done = '1' then
               computation_done <= '1';
               report "Computation completed" severity note;
+            end if;
+            
+            -- Debug: Report computation state
+            if matrix_loaded = '1' and ctrl_start = '0' and ctrl_done = '0' then
+              report "Systolic Array: In COMPUTE state, waiting for controller to start" severity note;
             end if;
 
           when UNLOAD =>
@@ -247,6 +255,7 @@ begin
             b_bus(i, j) <= input_matrix(i, j);
           end loop;
         end loop;
+        report "Systolic Array: Matrix loaded into systolic array" severity note;
       end if;
     end if;
   end process;
@@ -315,6 +324,7 @@ begin
       if rst_n = '0' then
         ctrl_start <= '0';
         done       <= '0';
+        ctrl_valid <= '0';
       else
         -- Start controller when matrix is loaded
         if matrix_loaded = '1' and ctrl_start = '0' and ctrl_done = '0' then
@@ -323,6 +333,27 @@ begin
         else
           ctrl_start <= '0';
         end if;
+        
+        -- Track controller completion
+        if ctrl_done = '1' then
+          ctrl_valid <= '1';
+          report "Systolic Array: Controller completed computation" severity note;
+        else
+          ctrl_valid <= '0';
+        end if;
+        
+        -- Debug: Report controller state
+        if matrix_loaded = '1' and ctrl_start = '1' then
+          report "Systolic Array: Controller started, col_pivot=" & integer'image(ctrl_col_pivot) & 
+                 ", ain=" & integer'image(to_integer(ctrl_ain)) & 
+                 ", bin=" & integer'image(to_integer(ctrl_bin)) severity note;
+        end if;
+        
+        -- Debug: Report matrix loading state
+        if matrix_loaded = '1' then
+          report "Systolic Array: Matrix loaded, ready for computation" severity note;
+        end if;
+        
         -- Signal completion when unloading is done
         if io_state = UNLOAD and unload_cnt = ROWS * COLS - 1 and dout_ready = '1' then
           done <= '1';

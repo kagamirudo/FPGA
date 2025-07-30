@@ -26,7 +26,9 @@ entity jacobi_ctrl is
     bin : in data_t; -- b = A(col_pivot+1 , row)
     -- rotation parameters broadcast back into the grid
     c_out : out data_t;
-    s_out : out data_t
+    s_out : out data_t;
+    -- column pair selection for systolic array
+    col_pivot : out integer range 0 to COLS - 2
   );
 end entity jacobi_ctrl;
 
@@ -57,7 +59,11 @@ architecture rtl of jacobi_ctrl is
   signal cordic_c, cordic_s : data_t;
   signal cordic_valid       : std_logic;
   signal cordic_start       : std_logic                   := '0';
+  signal current_col_pivot  : integer range 0 to COLS - 2 := 0;
 begin
+  -- Output the current column pivot
+  col_pivot <= current_col_pivot;
+  
   ------------------------------------------------------------------
   -- Controller FSM: IDLE → PAIR → CORDIC → BROADCAST → next pair
   ------------------------------------------------------------------
@@ -69,12 +75,14 @@ begin
         pair_idx  <= 0;
         busy      <= '0';
         done      <= '0';
+        current_col_pivot <= 0;
       else
         done <= '0';
         if start = '1' and busy = '0' then
           busy      <= '1';
           sweep_cnt <= 0;
           pair_idx  <= 0;
+          current_col_pivot <= 0;
           cordic_start <= '1';
           report "Jacobi Controller: Starting computation" severity note;
         elsif busy = '1' then
@@ -85,12 +93,17 @@ begin
             c_out <= cordic_c;
             s_out <= cordic_s;
             report "Jacobi Controller: Received CORDIC result, pair_idx=" & integer'image(pair_idx) & 
-                   ", sweep_cnt=" & integer'image(sweep_cnt) severity note;
+                   ", sweep_cnt=" & integer'image(sweep_cnt) & 
+                   ", col_pivot=" & integer'image(current_col_pivot) severity note;
+            
+            -- Update column pivot for next iteration
             if pair_idx < COLS - 2 then
               pair_idx <= pair_idx + 2;
+              current_col_pivot <= pair_idx + 2;
               cordic_start <= '1';  -- Start next CORDIC computation
             else
               pair_idx  <= 1;
+              current_col_pivot <= 1;
               sweep_cnt <= sweep_cnt + 1;
               report "Jacobi Controller: Completed sweep " & integer'image(sweep_cnt) severity note;
               if sweep_cnt = SWEEPS - 1 then

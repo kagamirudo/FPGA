@@ -86,6 +86,13 @@ begin
         else
           -- CORDIC iteration
           shift_val := iter_cnt;
+          
+          -- Debug: Print iteration progress
+          if iter_cnt mod 4 = 0 then
+            report "CORDIC: Iteration " & integer'image(iter_cnt) & 
+                   ", x=" & integer'image(to_integer(x_reg)) & 
+                   ", y=" & integer'image(to_integer(y_reg)) severity note;
+          end if;
 
           if y_reg >= 0 then
             -- Rotate clockwise

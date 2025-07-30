@@ -51,7 +51,7 @@ entity svd_axi_stream is
 end svd_axi_stream;
 
 architecture rtl of svd_axi_stream is
-  type state_t is (IDLE, LOAD, COMPUTE, DRAIN);
+  type state_t is (IDLE, LOAD, LOAD_COMPLETE, COMPUTE, DRAIN);
   signal state, n_state : state_t;
 
   constant TOTAL_WORDS : natural := ROWS * COLS;
@@ -110,7 +110,7 @@ begin
         if state = LOAD and s_axis_tvalid = '1' and s_axis_tready_int = '1' then
           -- Debug: Track data reception
           if load_cnt >= 60 then -- Near the end
-            report "AXI-Stream: load_cnt = " & integer'image(load_cnt) & ", expecting 63" severity note;
+            report "AXI-Stream: load_cnt = " & integer'image(load_cnt) & ", expecting " & integer'image(TOTAL_WORDS) severity note;
           end if;
           load_cnt <= load_cnt + 1;
         elsif state = IDLE then
@@ -149,11 +149,17 @@ begin
           -- Debug: Print when we receive data
           report "AXI-Stream: Received data = " & integer'image(to_integer(signed(s_axis_tdata))) severity note;
           if s_axis_tlast = '1' then
-            core_start <= '1';
-            n_state    <= COMPUTE;
-            report "AXI-Stream: Starting computation with load_cnt = " & integer'image(load_cnt) severity note;
+            -- Don't start computation immediately, wait for next cycle
+            n_state <= LOAD_COMPLETE;
+            report "AXI-Stream: Received last data, waiting to start computation" severity note;
           end if;
         end if;
+
+      when LOAD_COMPLETE =>
+        -- Wait one cycle to ensure systolic array has processed all data
+        core_start <= '1';
+        n_state    <= COMPUTE;
+        report "AXI-Stream: Starting computation with load_cnt = " & integer'image(load_cnt) severity note;
 
       when COMPUTE =>
         -- Wait for computation to complete
