@@ -119,7 +119,7 @@ begin
   ------------------------------------------------------------------
   -- Next‑state / output logic
   ------------------------------------------------------------------
-  process (state, s_axis_tvalid, s_axis_tlast, core_done, m_axis_tready)
+  process (state, s_axis_tvalid, s_axis_tlast, core_done, m_axis_tready, core_dout_valid, core_dout_last)
   begin
     -- defaults
     n_state           <= state;
@@ -145,11 +145,15 @@ begin
         end if;
 
       when COMPUTE =>
+        -- Wait for computation to complete
         if core_done = '1' then
           n_state <= DRAIN;
         end if;
 
       when DRAIN =>
+        -- Pass through output data from core
+        core_dout_ready <= m_axis_tready;
+        -- Stay in DRAIN until all data is output
         if core_dout_valid = '1' and core_dout_last = '1' and m_axis_tready = '1' then
           n_state <= IDLE;
         end if;

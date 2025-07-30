@@ -139,6 +139,7 @@ begin
   recv : process (aclk)
   begin
     if rising_edge(aclk) then
+      -- Debug: Print state information
       if m_axis_tvalid = '1' then
         output_cnt <= output_cnt + 1;
         report "out(" & integer'image(output_cnt) & ") = " &
@@ -146,10 +147,15 @@ begin
 
         if m_axis_tlast = '1' then
           report "------ all outputs received ------";
-          end if;
         end if;
       end if;
-    end process;
+      
+      -- Debug: Print when we're waiting for output
+      if output_cnt = 0 and m_axis_tvalid = '0' then
+        report "Waiting for output data..." severity note;
+      end if;
+    end if;
+  end process;
 
     ------------------------------------------------------------------
     --  Safety timeout (10 µs)
