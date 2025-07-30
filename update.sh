@@ -16,6 +16,7 @@ copy_and_sync() {
     local folder_name="$1"
     local source_dir="$DEFAULT_DIR/$folder_name"
     local target_dir="$folder_name"
+    local is_update=false
     
     echo "Source directory: $source_dir"
     echo "Target directory: $target_dir"
@@ -33,6 +34,7 @@ copy_and_sync() {
         
         if [ $? -eq 0 ]; then
             echo "Successfully updated folder: $target_dir"
+            is_update=true
         else
             echo "Error: Failed to update folder with rsync!"
             exit 1
@@ -55,9 +57,28 @@ copy_and_sync() {
         echo "Adding to git..."
         git add "$target_dir"
         
-        # Commit the changes
-        echo "Committing changes..."
-        git commit -m "Add folder: $target_dir"
+        # Check git status to determine the type of changes
+        echo "Checking git status..."
+        local git_status=$(git status --porcelain "$target_dir")
+        local commit_message=""
+        
+        if [ "$is_update" = true ]; then
+            # For updates, check if files were added or modified
+            if echo "$git_status" | grep -q "^A"; then
+                commit_message="Add files to folder: $target_dir"
+            elif echo "$git_status" | grep -q "^M"; then
+                commit_message="Modify files in folder: $target_dir"
+            else
+                commit_message="Update folder: $target_dir"
+            fi
+        else
+            # For new folders
+            commit_message="Add folder: $target_dir"
+        fi
+        
+        # Commit the changes with specific message
+        echo "Committing changes: $commit_message"
+        git commit -m "$commit_message"
         
         # Push to origin
         echo "Pushing to origin..."
