@@ -1,0 +1,90 @@
+Time resolution is 1 ps
+Note: Time 10ns: valid_out=0, L_count=0, U_count=0, L_out=0, U_out=0
+Time: 115 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 15ns: Feeding data, valid_in='1', a_in=15
+Time: 165 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 16ns: Feeding data, valid_in='1', a_in=14
+Time: 175 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 17ns: Feeding data, valid_in='1', a_in=13
+Time: 185 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 18ns: Feeding data, valid_in='0', a_in=13
+Time: 195 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 19ns: Feeding data, valid_in='0', a_in=13
+Time: 205 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 20ns: valid_out=0, L_count=0, U_count=0, L_out=0, U_out=0
+Time: 215 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 20ns: Feeding data, valid_in='0', a_in=13
+Time: 215 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 20ns: Debug - valid_out='0', L_out=0, U_out=0
+Time: 215 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 21ns: Feeding data, valid_in='0', a_in=13
+Time: 225 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 21ns: Debug - valid_out='0', L_out=0, U_out=0
+Time: 225 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 22ns: Feeding data, valid_in='0', a_in=13
+Time: 235 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 22ns: Debug - valid_out='0', L_out=0, U_out=0
+Time: 235 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 23ns: Feeding data, valid_in='0', a_in=13
+Time: 245 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 23ns: Debug - valid_out='0', L_out=0, U_out=0
+Time: 245 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 24ns: Feeding data, valid_in='0', a_in=13
+Time: 255 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 24ns: Debug - valid_out='0', L_out=0, U_out=0
+Time: 255 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 25ns: Feeding data, valid_in='0', a_in=13
+Time: 265 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 25ns: Debug - valid_out='0', L_out=0, U_out=0
+Time: 265 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 26ns: Feeding data, valid_in='0', a_in=13
+Time: 275 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 26ns: Debug - valid_out='0', L_out=0, U_out=0
+Time: 275 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 27ns: Feeding data, valid_in='0', a_in=13
+Time: 285 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 27ns: Debug - valid_out='0', L_out=0, U_out=0
+Time: 285 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 28ns: Feeding data, valid_in='0', a_in=13
+Time: 295 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 28ns: Debug - valid_out='0', L_out=0, U_out=0
+Time: 295 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 29ns: Feeding data, valid_in='0', a_in=13
+Time: 305 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 29ns: Debug - valid_out='0', L_out=0, U_out=0
+Time: 305 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 30ns: valid_out=0, L_count=0, U_count=0, L_out=0, U_out=0
+Time: 315 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 30ns: Feeding data, valid_in='0', a_in=13
+Time: 315 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 30ns: Debug - valid_out='0', L_out=0, U_out=0
+Time: 315 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 31ns: Debug - valid_out='0', L_out=0, U_out=0
+Time: 325 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 32ns: Debug - valid_out='0', L_out=0, U_out=0
+Time: 335 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 33ns: Debug - valid_out='0', L_out=0, U_out=0
+Time: 345 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 34ns: Debug - valid_out='0', L_out=0, U_out=0
+Time: 355 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 35ns: Debug - valid_out='0', L_out=0, U_out=0
+Time: 365 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 36ns: Debug - valid_out='0', L_out=0, U_out=0
+Time: 375 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 37ns: Debug - valid_out='0', L_out=0, U_out=0
+Time: 385 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 38ns: Debug - valid_out='0', L_out=0, U_out=0
+Time: 395 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 39ns: Debug - valid_out='0', L_out=0, U_out=0
+Time: 405 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 40ns: valid_out=0, L_count=0, U_count=0, L_out=0, U_out=0
+Time: 415 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 40ns: Debug - valid_out='0', L_out=0, U_out=0
+Time: 415 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 50ns: valid_out=0, L_count=0, U_count=0, L_out=0, U_out=0
+Time: 515 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Note: Time 60ns: valid_out=0, L_count=0, U_count=0, L_out=0, U_out=0
+Time: 615 ns  Iteration: 0  Process: /lu_tb/line__68  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+Failure: Simulation finished.
+Time: 685 ns  Iteration: 0  Process: /lu_tb/line__50  File: D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd
+$finish called at time : 685 ns : File "D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd" Line 64

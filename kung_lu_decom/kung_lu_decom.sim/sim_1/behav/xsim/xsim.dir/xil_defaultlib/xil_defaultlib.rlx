@@ -1,0 +1,9 @@
+0.7
+2020.2
+May 22 2025
+00:13:55
+D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sim_1/new/lu_tb.vhd,1754398707,vhdl,,,,lu_tb,,,,,,,,
+D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sources_1/new/MA_cell.vhd,1754399036,vhdl,D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sources_1/new/lu_array4x4.vhd,,,ma_cell,,,,,,,,
+D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sources_1/new/M_cell.vhd,1754398895,vhdl,D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sources_1/new/lu_array4x4.vhd,,,m_cell,,,,,,,,
+D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sources_1/new/lu_array4x4.vhd,1754399552,vhdl,,,,lu_array4x4,,,,,,,,
+D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sources_1/new/lu_pkg.vhd,1754399195,vhdl,D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sources_1/new/MA_cell.vhd;D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sources_1/new/M_cell.vhd;D:/Materials/Study/HLS/kung_lu_decom/kung_lu_decom.srcs/sources_1/new/lu_array4x4.vhd,,,lu_pkg,,,,,,,,
