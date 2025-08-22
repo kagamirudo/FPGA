@@ -28,8 +28,9 @@ use ieee.numeric_std.all;
 --  PACKAGE: constants & types
 -------------------------------------------------------------------------------
 package lu_pkg is
-  constant W : integer := 32; -- data width
-  subtype dint is signed(W - 1 downto 0);
+  constant W : integer := 11; -- data width
+  constant N : integer := 4; -- number of rows/columns
+  subtype dint is std_logic_vector(W - 1 downto 0);
 
   type dint_vec is array (natural range <>) of dint; -- 1‑D
   type dint_mat is array (natural range <>, natural range <>) of dint; -- 2‑D

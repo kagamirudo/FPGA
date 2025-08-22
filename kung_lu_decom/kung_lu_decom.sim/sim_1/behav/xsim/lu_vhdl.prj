@@ -1,6 +1,9 @@
 # compile vhdl design source files
 vhdl xil_defaultlib  \
 "../../../../kung_lu_decom.srcs/sources_1/new/lu_pkg.vhd" \
+"../../../../kung_lu_decom.srcs/sources_1/new/fixed_div.vhd" \
+"../../../../kung_lu_decom.srcs/sources_1/new/Div_cell.vhd" \
+"../../../../kung_lu_decom.srcs/sources_1/new/R_cell.vhd" \
 "../../../../kung_lu_decom.srcs/sources_1/new/M_cell.vhd" \
 "../../../../kung_lu_decom.srcs/sources_1/new/MA_cell.vhd" \
 "../../../../kung_lu_decom.srcs/sources_1/new/lu_array4x4.vhd" \
