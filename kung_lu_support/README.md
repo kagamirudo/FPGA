@@ -83,11 +83,19 @@ Generates a band matrix from input matrix for systolic array processing.
 
 ##### From Band Matrix
 ```c
-void extract_LU_from_band_matrix(uint8_t size, uint16_t band_matrix[][14], 
+void extract_LU_from_band_matrix(uint8_t size, uint8_t band_width, 
+                                 uint16_t band_matrix[][band_width], 
                                  uint16_t L_matrix[size][size], 
                                  uint16_t U_matrix[size][size]);
 ```
 Extracts L and U matrices from band matrix output.
+
+**Parameters:**
+- `size`: Matrix dimension (e.g., 4 for 4x4 matrix)
+- `band_width`: Width of band matrix (typically 2*(2*n-1))
+- `band_matrix`: Input band matrix
+- `L_matrix`: Output L matrix (lower triangular)
+- `U_matrix`: Output U matrix (upper triangular)
 
 ##### From Hardware Sequence
 ```c
@@ -170,7 +178,7 @@ int main() {
     
     // Extract L and U matrices
     uint16_t L[n][n], U[n][n];
-    extract_LU_from_band_matrix(n, band_matrix, L, U);
+    extract_LU_from_band_matrix(n, band_width, band_matrix, L, U);
     
     // Print results
     print_matrix("L Matrix", n, L);

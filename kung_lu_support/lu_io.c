@@ -381,7 +381,7 @@ void extract_LU_from_band_matrix(uint8_t size, uint8_t band_width, uint16_t band
         t_prime = 0;
 
         while (t_prime < band_width)
-        { // band_width = 14
+        { // Use dynamic band_width
             if (t_prime >= n - 1)
             {
                 if (((t_prime - (n - 1) - k) % 3) == 0)
