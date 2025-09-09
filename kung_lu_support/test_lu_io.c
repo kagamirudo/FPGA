@@ -41,7 +41,7 @@ int main()
     // Test 3: LU extraction
     printf("3. LU Matrix Extraction Test:\n");
     uint16_t L_matrix[n][n], U_matrix[n][n];
-    extract_LU_from_band_matrix(n, band_matrix, L_matrix, U_matrix);
+    extract_LU_from_band_matrix(n, band_width, band_matrix, L_matrix, U_matrix);
     print_matrix("L Matrix", n, L_matrix);
     print_matrix("U Matrix", n, U_matrix);
 
@@ -81,7 +81,7 @@ int main()
 
     // Extract LU for 5x5
     uint16_t L_5x5[n5][n5], U_5x5[n5][n5];
-    extract_LU_from_band_matrix(n5, band_matrix_5, L_5x5, U_5x5);
+    extract_LU_from_band_matrix(n5, band_width_5, band_matrix_5, L_5x5, U_5x5);
     print_matrix("L Matrix (5x5)", n5, L_5x5);
     print_matrix("U Matrix (5x5)", n5, U_5x5);
 
@@ -115,7 +115,7 @@ int main()
 
     // Extract LU for 6x6
     uint16_t L_6x6[n6][n6], U_6x6[n6][n6];
-    extract_LU_from_band_matrix(n6, band_matrix_6, L_6x6, U_6x6);
+    extract_LU_from_band_matrix(n6, band_width_6, band_matrix_6, L_6x6, U_6x6);
     print_matrix("L Matrix (6x6)", n6, L_6x6);
     print_matrix("U Matrix (6x6)", n6, U_6x6);
 

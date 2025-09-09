@@ -352,7 +352,7 @@ void get_result_LU(uint8_t size, uint16_t *l_values, uint16_t *u_values,
 
 // Function to extract L and U matrices from band matrix output
 // This processes the output from lu_io_get_input_matrix to reconstruct L and U
-void extract_LU_from_band_matrix(uint8_t size, uint16_t band_matrix[][14],
+void extract_LU_from_band_matrix(uint8_t size, uint8_t band_width, uint16_t band_matrix[][band_width],
                                  uint16_t L_matrix[size][size], uint16_t U_matrix[size][size])
 {
     int n = size;
@@ -380,7 +380,7 @@ void extract_LU_from_band_matrix(uint8_t size, uint16_t band_matrix[][14],
         t = 0;
         t_prime = 0;
 
-        while (t_prime < 14)
+        while (t_prime < band_width)
         { // band_width = 14
             if (t_prime >= n - 1)
             {
@@ -409,7 +409,7 @@ void extract_LU_from_band_matrix(uint8_t size, uint16_t band_matrix[][14],
         t = 0;
         t_prime = 0;
 
-        while (t_prime < 14)
+        while (t_prime < band_width)
         {
             if (t_prime >= n - 1 && t_prime < 3 * n)
             {
