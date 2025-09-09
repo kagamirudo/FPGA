@@ -1,0 +1,34 @@
+# Build artifacts
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+
+# Executables
+lu_io_test
+lu_io_example
+lu_io_test.exe
+lu_io_example.exe
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.log
