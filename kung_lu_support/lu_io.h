@@ -18,7 +18,10 @@ void get_result_LU(uint8_t size, uint16_t *l_values, uint16_t *u_values,
                    uint16_t L_matrix[size][size], uint16_t U_matrix[size][size]);
 void extract_LU_from_band_matrix(uint8_t size, uint8_t band_width, uint16_t band_matrix[][band_width],
                                  uint16_t L_matrix[size][size], uint16_t U_matrix[size][size]);
-void simulate_hardware_sequence(uint8_t size, uint16_t L_matrix[size][size], uint16_t U_matrix[size][size]);
+void simulate_math_lu(uint8_t size, uint8_t format_fraction, uint16_t A[size][size],
+                      uint16_t L_matrix[size][size], uint16_t U_matrix[size][size]);
 void print_matrix(const char *title, uint8_t size, uint16_t matrix[size][size]);
+void print_matrix_decimal(const char *title, uint8_t size,
+                          uint8_t format_fraction, uint16_t matrix[size][size]);
 
 #endif

@@ -64,10 +64,10 @@ int main()
     printf("========================\n");
 
     uint16_t L_hw[n][n], U_hw[n][n];
-    simulate_hardware_sequence(n, L_hw, U_hw);
+    simulate_math_lu(n, 0x65, input_2d, L_hw, U_hw);
 
-    print_matrix("L Matrix (Hardware Simulated)", n, L_hw);
-    print_matrix("U Matrix (Hardware Simulated)", n, U_hw);
+    print_matrix_decimal("L Matrix (Math Simulated)", n, 0x65, L_hw);
+    print_matrix_decimal("U Matrix (Math Simulated)", n, 0x65, U_hw);
 
     printf("\nExample completed successfully!\n");
     return 0;

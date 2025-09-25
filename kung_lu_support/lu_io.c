@@ -50,8 +50,7 @@ uint8_t lu_io_get_input_matrix(uint8_t size, uint16_t input_matrix[size][size],
             if (ii >= 0 && ii < n && jj >= 0 && jj < n)
             {
                 output_matrix[k + (n - 1)][tp] = input_matrix[ii][jj]; // map k in [-(n-1)..(n-1)] to [0..2n-2]
-                if (k > 0)
-                    output_matrix[-k + (n - 1)][tp] = input_matrix[jj][ii];
+                output_matrix[-k + (n - 1)][tp] = input_matrix[jj][ii];
             }
         }
     }
@@ -275,7 +274,11 @@ void get_result_LU(uint8_t size, uint16_t *l_values, uint16_t *u_values,
                    uint16_t L_matrix[size][size], uint16_t U_matrix[size][size])
 {
     int n = size;
-    int i, j, k, t, t_prime;
+    // int l_bound = (size - 1) * 2;
+    // int u_bound = size * size - l_bound;
+    int i, j, jump;
+    int l_idx = 0;
+    int u_idx = 0;
 
     // Initialize matrices
     for (i = 0; i < n; i++)
@@ -290,62 +293,46 @@ void get_result_LU(uint8_t size, uint16_t *l_values, uint16_t *u_values,
     // Set diagonal of L to 1
     for (i = 0; i < n; i++)
     {
-        L_matrix[i][i] = 1;
+        L_matrix[i][i] = convert_fraction_to_hex(1.0f, 0x65);
     }
 
-    // Process L matrix (lower triangular, k < 0)
-    for (k = 1; k < n; k++)
-    { // k = 1, 2, ..., n-1 (corresponds to k = -1, -2, ..., -(n-1))
-        t = 0;
-        t_prime = 0;
-
-        while (t_prime < 3 * n)
-        { // Process enough time steps
-            if (t_prime >= n - 1)
+    l_idx = n * (n - 1); // skip 4 cycles
+    for (i = 0; i < n - 1; i++)
+    {
+        jump = 0;
+        for (j = i + 1; j < n; j++)
+        {
+            L_matrix[j][i] = l_values[l_idx + jump];
+            // printf("l_values[%d] = %f\n", l_idx + jump, convert_hex_to_fraction(l_values[l_idx + jump], 0x65));
+            jump += n;
+            if (j == n - 1)
             {
-                if (((t_prime - (n - 1) - k) % 3) == 0)
-                {
-                    // Extract l(t-k+1, t+1) = -z(t', k)
-                    int row = t - k + 1;
-                    int col = t + 1;
-                    if (row >= 0 && row < n && col >= 0 && col < n)
-                    {
-                        // Assuming l_values contains the z(t', k) values in order
-                        // For now, we'll use a placeholder - in real implementation,
-                        // you'd extract from the actual hardware output
-                        L_matrix[row][col] = 0; // Placeholder - replace with actual extraction
-                    }
-                    t++;
-                }
+                // printf("l_idx = %d, j = %d\n", l_idx, j);
+                l_idx += (j - i) * (n - 1);
             }
-            t_prime++;
         }
     }
 
-    // Process U matrix (upper triangular, k >= 0)
-    for (k = 0; k < n; k++)
-    { // k = 0, 1, 2, ..., n-1
-        t = 0;
-        t_prime = 0;
-
-        while (t_prime < 3 * n)
+    u_idx = (n - 2) * n; // skip 2 cycles
+    for (i = 0; i < n; i++)
+    {
+        jump = 0;
+        for (j = i; j < n; j++)
         {
-            if (t_prime >= n - 1 && t_prime < 3 * n)
+            if (j == n - 1 && i == 0)
             {
-                if (((t_prime - (n - 1) - k) % 3) == 0)
-                {
-                    // Extract u(t+1, t+k+1) = z(t', k)
-                    int row = t;
-                    int col = t + k;
-                    if (row >= 0 && row < n && col >= 0 && col < n)
-                    {
-                        // Assuming u_values contains the z(t', k) values in order
-                        U_matrix[row][col] = 0; // Placeholder - replace with actual extraction
-                    }
-                    t++;
-                }
+                U_matrix[i][j] = u_values[u_idx + 5 * n - 1];
+                u_idx = 5 * n;
+                continue;
             }
-            t_prime++;
+            else
+                U_matrix[i][j] = u_values[u_idx + jump];
+            jump += n + 1;
+            if (j == n - 1)
+            {
+                // printf("u_idx = %d, j = %d\n", u_idx, j);
+                u_idx += j * n;
+            }
         }
     }
 }
@@ -435,73 +422,61 @@ void extract_LU_from_band_matrix(uint8_t size, uint8_t band_width, uint16_t band
 
 // Function to simulate the hardware sequence and extract L and U matrices
 // This simulates the xil_printf sequence you provided
-void simulate_hardware_sequence(uint8_t size, uint16_t L_matrix[size][size], uint16_t U_matrix[size][size])
+void simulate_math_lu(uint8_t size, uint8_t format_fraction, uint16_t A[size][size], uint16_t L_matrix[size][size], uint16_t U_matrix[size][size])
 {
     int n = size;
-    int i, j;
+    int i, j, k;
 
-    // Initialize matrices
-    for (i = 0; i < n; i++)
+    // Use a temporary float matrix for computation
+    float Af[n][n];
+    float L[n][n];
+    float U[n][n];
+
+    // Convert input A (uint16_t, fixed-point) to float
+    for (i = 0; i < n; ++i)
+        for (j = 0; j < n; ++j)
+            Af[i][j] = convert_hex_to_fraction(A[i][j], format_fraction);
+
+    // Initialize L and U to zero
+    for (i = 0; i < n; ++i)
+        for (j = 0; j < n; ++j)
+            L[i][j] = U[i][j] = 0.0f;
+
+    // Doolittle LU decomposition (no pivoting)
+    for (i = 0; i < n; ++i)
     {
-        for (j = 0; j < n; j++)
+        // Upper Triangular
+        for (k = i; k < n; ++k)
         {
-            L_matrix[i][j] = 0;
-            U_matrix[i][j] = 0;
+            float sum = 0.0f;
+            for (j = 0; j < i; ++j)
+                sum += L[i][j] * U[j][k];
+            U[i][k] = Af[i][k] - sum;
+        }
+
+        // Lower Triangular
+        for (k = i; k < n; ++k)
+        {
+            if (i == k)
+                L[i][i] = 1.0f; // Diagonal as 1
+            else
+            {
+                float sum = 0.0f;
+                for (j = 0; j < i; ++j)
+                    sum += L[k][j] * U[j][i];
+                L[k][i] = (U[i][i] != 0.0f) ? (Af[k][i] - sum) / U[i][i] : 0.0f;
+            }
         }
     }
 
-    // Set diagonal of L to 1
-    for (i = 0; i < n; i++)
+    // Store result in output matrices (convert to uint16_t using fixed-point format)
+    for (i = 0; i < n; ++i)
     {
-        L_matrix[i][i] = 1;
-    }
-
-    // Simulate the hardware sequence
-    // In real implementation, you would:
-    // 1. Read from LU_IP_mReadReg(BASE_ADDR, 4*j) for j=7..9 (L values)
-    // 2. Read from LU_IP_mReadReg(BASE_ADDR, 4*j) for j=10..13 (U values)
-    // 3. Process these values according to the theory
-
-    printf("Simulating hardware sequence for %dx%d matrix:\n", n, n);
-    printf("This would read L values from registers 7-9 and U values from registers 10-13\n");
-    printf("For now, using placeholder values...\n");
-
-    // Placeholder: In real implementation, extract from hardware registers
-    // L matrix (lower triangular, excluding diagonal)
-    if (n >= 2)
-        L_matrix[1][0] = 0x100; // l21
-    if (n >= 3)
-    {
-        L_matrix[2][1] = 0x200; // l32
-        L_matrix[2][0] = 0x150; // l31
-    }
-    if (n >= 4)
-    {
-        L_matrix[3][2] = 0x300; // l43
-        L_matrix[3][1] = 0x250; // l42
-        L_matrix[3][0] = 0x180; // l41
-    }
-
-    // U matrix (upper triangular)
-    if (n >= 1)
-        U_matrix[0][0] = 0x400; // u11
-    if (n >= 2)
-    {
-        U_matrix[0][1] = 0x500; // u12
-        U_matrix[1][1] = 0x600; // u22
-    }
-    if (n >= 3)
-    {
-        U_matrix[0][2] = 0x700; // u13
-        U_matrix[1][2] = 0x800; // u23
-        U_matrix[2][2] = 0x900; // u33
-    }
-    if (n >= 4)
-    {
-        U_matrix[0][3] = 0xA00; // u14
-        U_matrix[1][3] = 0xB00; // u24
-        U_matrix[2][3] = 0xC00; // u34
-        U_matrix[3][3] = 0xD00; // u44
+        for (j = 0; j < n; ++j)
+        {
+            L_matrix[i][j] = convert_fraction_to_hex(L[i][j], format_fraction);
+            U_matrix[i][j] = convert_fraction_to_hex(U[i][j], format_fraction);
+        }
     }
 }
 
@@ -514,6 +489,20 @@ void print_matrix(const char *title, uint8_t size, uint16_t matrix[size][size])
         for (int j = 0; j < size; j++)
         {
             printf("%6x ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
+void print_matrix_decimal(const char *title, uint8_t size, uint8_t format_fraction, uint16_t matrix[size][size])
+{
+    printf("%s:\n", title);
+    for (int i = 0; i < size; i++)
+    {
+        for (int j = 0; j < size; j++)
+        {
+            printf("%8.3f ", convert_hex_to_fraction(matrix[i][j], format_fraction));
         }
         printf("\n");
     }

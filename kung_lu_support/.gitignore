@@ -1,3 +1,6 @@
+obj/
+exe/
+
 # Build artifacts
 *.o
 *.a

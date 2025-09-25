@@ -48,7 +48,7 @@ int main()
     // Test 4: Hardware simulation
     printf("4. Hardware Simulation Test:\n");
     uint16_t L_hw[n][n], U_hw[n][n];
-    simulate_hardware_sequence(n, L_hw, U_hw);
+    simulate_math_lu(n, 0x65, input_2d, L_hw, U_hw);
     print_matrix("L Matrix (Hardware)", n, L_hw);
     print_matrix("U Matrix (Hardware)", n, U_hw);
 
