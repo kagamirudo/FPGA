@@ -1,6 +1,6 @@
 # LU IO Package
 
-A comprehensive C library for LU decomposition matrix processing with hardware integration support for Kung-Lu systolic array architectures.
+A C library and simulation harness for LU decomposition matrix processing with hardware integration support for Kung-Lu systolic array architectures. The primary entry point for end-to-end verification is `test_lu_simulation.c`, which constructs a test band (test vector) input, simulates the hardware LU output stream with the correct timing and order, and validates the extracted L and U matrices as well as the reconstruction L*U = A.
 
 ## Overview
 
@@ -15,11 +15,16 @@ This package provides functions for:
 
 ```
 kung_lu_support/
-├── lu_io.h          # Header file with function declarations
-├── lu_io.c          # API implementation (library source)
-├── test_lu_io.c     # Test/demo program
-├── makefile         # Build configuration
-└── README.md        # This documentation
+├── lu_io.h              # Header file with function declarations
+├── lu_io.c              # API implementation (library source)
+├── test_lu_simulation.c # End-to-end simulation: input → hardware stream → LU → checks
+├── test_lu_io.c         # Lower-level API tests / demos
+├── example.c            # Minimal example
+├── simple_test.c        # Simple sanity test
+├── makefile             # Build configuration (outputs to exe/, objects in obj/)
+├── exe/                 # Built executables and lib (generated)
+├── obj/                 # Object files (generated)
+└── README.md            # This documentation
 ```
 
 ## Building the Package
@@ -32,24 +37,99 @@ kung_lu_support/
 ### Build Commands
 
 ```bash
-# Build both library and test executable
+# Build everything (library + executables)
 make all
 
-# Build only the static library
-make liblu_io.a
+# Run the simulation-focused test (recommended)
+make run-sim
 
-# Build only the test executable
-make lu_io_test
+# Other runs
+make run          # Runs lu_io_test
+make example      # Runs lu_io_example
+make simple-test  # Runs simple_test
 
-# Run the test program
-make run
-
-# Clean generated files
+# Clean generated files (removes exe/ and obj/)
 make clean
 
 # Install library system-wide (optional)
 sudo make install
 ```
+
+Notes:
+- All executables and the static library are emitted to `exe/`.
+- Object files are emitted to `obj/`.
+
+## Simulation Focus: `test_lu_simulation.c`
+
+The simulation test performs the following steps:
+- Constructs a 4x4 test matrix A as the input test vector.
+- Simulates the hardware output stream (L and U values) with the correct timing and ordering.
+- Extracts L and U matrices from the simulated stream using `get_result_LU`.
+- Builds a manual L and U for comparison and runs a software LU simulation for cross-checking.
+- Verifies that L*U reconstructs A and reports any differences; success indicates timing/order and extraction are correct.
+
+Run it via:
+```bash
+make run-sim
+```
+
+Expected output (abridged):
+```text
+./exe/test_lu_simulation
+=== LU Decomposition Simulation Test ===
+
+1. Creating test band matrix from hardware output:
+Original Matrix A:
+   1.000    1.000    0.000    3.000 
+   2.000    1.000   -1.000    1.000 
+   3.000   -1.000   -1.000    2.000 
+  -1.000    2.000    3.000   -1.000 
+
+2. Simulating hardware LU output sequence:
+Generated 42 L values and 56 U values from hardware sequence
+
+3. Extracting L and U matrices from hardware sequence:
+Debug: L values count = 42, U values count = 56
+L Matrix (from get_result_LU):
+   1.000    0.000    0.000    0.000 
+   2.000    1.000    0.000    0.000 
+   3.000    4.000    1.000    0.000 
+  -1.000   -3.000    0.000    1.000 
+
+U Matrix (from get_result_LU):
+   1.000    1.000    0.000    3.000 
+   0.000   -1.000   -1.000   -5.000 
+   0.000    0.000    3.000   13.000 
+   0.000    0.000    0.000  -13.000 
+
+4. Manual construction of L and U matrices:
+...
+
+5. Software LU simulation for comparison:
+...
+
+6. Verifying L*U = A:
+From get_result_LU(): 
+L*U Result:
+   1.000    1.000    0.000    3.000 
+   2.000    1.000   -1.000    1.000 
+   3.000   -1.000   -1.000    2.000 
+  -1.000    2.000    3.000   -1.000 
+
+From simulate_math_lu(): 
+L*U Result:
+   1.000    1.000    0.000    3.000 
+   2.000    1.000   -1.000    1.000 
+   3.000   -1.000   -1.000    2.000 
+  -1.000    2.000    3.000   -1.000 
+
+No differences found between L*U results
+from get_result_LU and simulate_math_lu.
+
+=== All tests completed successfully! ===
+```
+
+If your output matches the above, your test vector generation, hardware stream timing/order, LU extraction, and validation are all correct.
 
 ## API Reference
 
