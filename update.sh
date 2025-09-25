@@ -58,7 +58,26 @@ copy_and_sync() {
         if [ -n "$(git status --porcelain update.sh)" ]; then
             echo "Committing update.sh changes separately..."
             git add update.sh
-            git commit -m "update auto pushing process"
+            git commit -m "Update auto pushing process"
+        fi
+
+        # Ensure .gitignore has required rules and commit it separately if changed
+        if [ ! -f .gitignore ]; then
+            echo "Creating .gitignore..."
+            touch .gitignore
+        fi
+
+        # Ensure .idea/ is ignored
+        if ! grep -qE '^\.idea/\s*$' .gitignore; then
+            echo "Adding .idea/ to .gitignore"
+            printf "\n# IDE\n.idea/\n" >> .gitignore
+        fi
+
+        # If .gitignore has changes, commit with fixed message
+        if [ -n "$(git status --porcelain .gitignore)" ]; then
+            echo ".gitignore changed. Committing separately..."
+            git add .gitignore
+            git commit -m "Update .gitignore rules"
         fi
 
         echo "Adding to git..."
