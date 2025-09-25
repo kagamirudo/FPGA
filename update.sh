@@ -76,7 +76,14 @@ copy_and_sync() {
             commit_message="Add folder: $target_dir"
         fi
         
-        # Commit the changes with specific message
+        # Allow custom commit message before pushing
+        echo "Default commit message: $commit_message"
+        read -p "Enter custom commit message (or press Enter to use default): " custom_msg
+        if [ -n "$custom_msg" ]; then
+            commit_message="$custom_msg"
+        fi
+        
+        # Commit the changes with chosen message
         echo "Committing changes: $commit_message"
         git commit -m "$commit_message"
         
