@@ -39,6 +39,63 @@ bench/      Example kernels and schedules
 docs/       Design notes and background papers
 ```
 
+## Kung Projects
+
+This repository includes three project areas prefixed with `kung_`, which contain the core work you are developing around LU decomposition and SVD on FPGA.
+
+### `kung_lu_decom/`
+
+Vivado project for LU decomposition using a Kung-style systolic array.
+
+- Open in Vivado (2025.1+):
+  - Double-click `kung_lu_decom/kung_lu_decom.xpr`, or
+  - Launch Vivado and File → Open Project → select the `.xpr`.
+- Batch flow helpers:
+  - `run.tcl`: project-script to regenerate or run flows non-interactively.
+- Generated directories:
+  - `kung_lu_decom.hw/`, `kung_lu_decom.sim/`, `kung_lu_decom.runs/`, `kung_lu_decom.srcs/`, caches, and IP files.
+
+### `kung_lu_support/`
+
+Portable C library and test harness that generate inputs, extract L/U from hardware-like streams, and validate results. See `kung_lu_support/README.md` for full API docs.
+
+- Key files: `lu_io.h`, `lu_io.c`, `test_lu_simulation.c`, `test_lu_io.c`, `simple_test.c`, `example.c`
+- Build with make:
+  ```bash
+  cd kung_lu_support
+  make all         # build library and executables into exe/
+  make run-sim     # recommended: end-to-end LU simulation flow
+  # other targets: make run, make example, make simple-test, make clean
+  ```
+- What `run-sim` does:
+  - Creates a 4×4 test matrix A
+  - Simulates the hardware output sequence timing/order
+  - Extracts L and U and verifies that L×U reconstructs A
+
+### `kung_svd/`
+
+Vivado project for SVD experiments.
+
+- Open in Vivado: `kung_svd/kung_svd.xpr`
+- TCL helpers: `test_compile.tcl`, `test_sim.tcl`, `run_long_sim.tcl`
+- Simulator/export artifacts: `kung_svd.sim/`, `xsim/`, caches and IP files
+- The included `README.txt` is Vivado-generated; use the TCL scripts above to compile and simulate in batch if desired.
+
+## Sync Workflow for Kung Projects
+
+Use `update.sh` to copy or rsync project folders from your default workspace into this repository, auto-commit with a helpful message, and push to `origin`.
+
+```bash
+# Copy or update from /mnt/d/Materials/Study/HLS/<folder>
+./update.sh kung_lu_decom
+./update.sh kung_lu_support
+./update.sh kung_svd
+```
+
+- First run copies the folder; later runs rsync changes (`--delete` keeps it in sync)
+- You can provide a custom commit message when prompted or accept the default
+- The script will separately commit its own changes and `.gitignore` updates when needed
+
 ## Documentation & References
 
 * **Vitis HLS User Guide UG1399** – AXI4-Stream interface rules ([docs.amd.com][2], [docs.amd.com][3]).
