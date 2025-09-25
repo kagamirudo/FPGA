@@ -80,6 +80,13 @@ copy_and_sync() {
             git commit -m "Update .gitignore rules"
         fi
 
+		# If README.md changed, commit it separately with a fixed message
+		if [ -n "$(git status --porcelain README.md)" ]; then
+			echo "README.md changed. Committing separately..."
+			git add README.md
+			git commit -m "Update README"
+		fi
+
         echo "Adding to git..."
         git add "$target_dir"
         
