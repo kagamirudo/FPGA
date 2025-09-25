@@ -57,6 +57,12 @@ copy_and_sync() {
         echo "Adding to git..."
         git add "$target_dir"
         
+        # If this script has changes, include it in the same commit
+        if [ -n "$(git status --porcelain update.sh)" ]; then
+            echo "Including changes to update.sh in this commit"
+            git add update.sh
+        fi
+        
         # Check git status to determine the type of changes
         echo "Checking git status..."
         local git_status=$(git status --porcelain "$target_dir")
