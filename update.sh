@@ -54,14 +54,15 @@ copy_and_sync() {
     
     # Add to git if this is a git repository
     if [ -d ".git" ]; then
+        # If this script has changes, commit it separately with a fixed message
+        if [ -n "$(git status --porcelain update.sh)" ]; then
+            echo "Committing update.sh changes separately..."
+            git add update.sh
+            git commit -m "update auto pushing process"
+        fi
+
         echo "Adding to git..."
         git add "$target_dir"
-        
-        # If this script has changes, include it in the same commit
-        if [ -n "$(git status --porcelain update.sh)" ]; then
-            echo "Including changes to update.sh in this commit"
-            git add update.sh
-        fi
         
         # Check git status to determine the type of changes
         echo "Checking git status..."
