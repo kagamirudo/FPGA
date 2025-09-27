@@ -270,45 +270,105 @@ int main() {
 
 ### Hardware Integration
 
+The actual hardware implementation is in `LU_main.c` which interfaces with the Kung-Lu systolic array IP core:
+
 ```c
 #include "lu_io.h"
+#include "xparameters.h"
+#include "lu_ip.h"
+#include "xil_io.h"
 
-// Hardware register addresses (example)
-#define BASE_ADDR 0x40000000
+#define BASE_ADDR XPAR_LU_IP_0_BASEADDR
 
-void process_hardware_lu(uint8_t size) {
-    uint16_t L_matrix[size][size];
-    uint16_t U_matrix[size][size];
-    uint16_t l_values[3];  // For 4x4 matrix
-    uint16_t u_values[4];  // For 4x4 matrix
+int main() {
+    init_platform();
     
-    // Hardware sequence
-    for (int i = 0; i < 16; i++) {
-        // Reset step
-        LU_IP_mWriteReg(BASE_ADDR, 4*14, 0x4);
+    // Input matrix (4x4 in 1D format)
+    uint16_t a[16] = {
+        0x20, 0x20, 0x0, 0x60,
+        0x40, 0x20, 0x7e0, 0x20,
+        0x60, 0x7e0, 0x7e0, 0x40,
+        0x7e0, 0x40, 0x60, 0x7e0
+    };
+    
+    int n = 4;
+    int band_height = 2 * n - 1;
+    int band_width = 2 * band_height;
+    int input_size = band_height;  // Number of input registers
+    int L_size = n - 1;            // Number of L output registers
+    int U_size = n;                // Number of U output registers
+    
+    uint8_t max_k;
+    uint8_t format = 0x65;
+    uint8_t reg_offset = n * band_width;  // Control register offset
+    
+    // Convert to 2D and generate band matrix
+    uint16_t input_2d[n][n];
+    uint16_t input_band[band_height][band_width];
+    convert_1d_to_2d(a, n, input_2d);
+    lu_io_get_input_matrix(n, input_2d, band_width, band_height, input_band, &max_k);
+    
+    // Output arrays
+    uint16_t L_matrix[n][n];
+    uint16_t U_matrix[n][n];
+    uint16_t l_value[band_width * L_size];  // L values from hardware
+    uint16_t u_value[band_width * U_size];  // U values from hardware
+    
+    // Hardware sequence: process each time step
+    for (int i = 0; i < band_width; i++) {
+        // Reset step: slv_reg14(2) <= '1'
+        LU_IP_mWriteReg(BASE_ADDR, reg_offset, 0x4);
         
-        // Write input data
-        for (int j = 0; j < 7; j++) 
-            LU_IP_mWriteReg(BASE_ADDR, 4*j, v[i][j]);
+        // Write input data to registers 0..(input_size-1)
+        for (int j = 0; j < input_size; j++)
+            LU_IP_mWriteReg(BASE_ADDR, n * j, input_band[j][i]);
         
-        // Step
-        LU_IP_mWriteReg(BASE_ADDR, 4*14, 0x2);
+        // Step: slv_reg14(1) <= '1'
+        LU_IP_mWriteReg(BASE_ADDR, reg_offset, 0x2);
         
-        // Read L values (registers 7-9)
-        for (int j = 7; j < 10; j++)
-            l_values[j-7] = LU_IP_mReadReg(BASE_ADDR, 4*j);
+        // Read L values from registers input_size..(input_size + L_size - 1)
+        for (int j = input_size; j < input_size + L_size; j++)
+            l_value[i * L_size + (j - input_size)] = LU_IP_mReadReg(BASE_ADDR, n * j);
         
-        // Read U values (registers 10-13)
-        for (int j = 10; j < 14; j++)
-            u_values[j-10] = LU_IP_mReadReg(BASE_ADDR, 4*j);
+        // Read U values from registers (input_size + L_size)..(input_size + L_size + U_size - 1)
+        for (int j = input_size + L_size; j < input_size + L_size + U_size; j++)
+            u_value[i * U_size + (j - input_size - L_size)] = LU_IP_mReadReg(BASE_ADDR, n * j);
     }
     
-    // Extract matrices
-    get_result_LU(size, l_values, u_values, L_matrix, U_matrix);
+    // Extract L and U matrices from hardware output
+    get_result_LU(n, l_value, u_value, L_matrix, U_matrix);
     
-    // Use the matrices...
+    // Display results
+    print_matrix_decimal("L Matrix", n, format, L_matrix);
+    print_matrix_decimal("U Matrix", n, format, U_matrix);
+    
+    cleanup_platform();
+    return 0;
 }
 ```
+
+**Hardware Control Flow:**
+1. **Reset Array**: `slv_reg14(0) <= '1'` - Initialize the systolic array
+2. **Reset Step**: `slv_reg14(2) <= '1'` - Reset timing for each cycle
+3. **Write Input**: Write band matrix column to registers 0-6
+4. **Step**: `slv_reg14(1) <= '1'` - Advance one time step
+5. **Read Output**: Read L values (registers 7-9) and U values (registers 10-13)
+6. **Repeat**: Process all `band_width` time steps
+
+**Register Map:**
+- **Registers 0..(input_size-1)**: Input data ports (7 values per time step for 4x4 matrix)
+- **Registers input_size..(input_size + L_size - 1)**: L matrix output (3 values per time step for 4x4 matrix)
+- **Registers (input_size + L_size)..(input_size + L_size + U_size - 1)**: U matrix output (4 values per time step for 4x4 matrix)
+- **Register offset (n × band_width)**: Control register
+  - Bit 0: Reset array
+  - Bit 1: Step
+  - Bit 2: Reset step
+
+**Register Addressing:**
+- Input registers: `n × j` (where j = 0 to input_size-1)
+- L output registers: `n × j` (where j = input_size to input_size + L_size - 1)
+- U output registers: `n × j` (where j = input_size + L_size to input_size + L_size + U_size - 1)
+- Control register: `n × band_width` (register 14 for 4x4 matrix)
 
 ### Fixed-Point Conversion
 

@@ -185,8 +185,8 @@ int main()
 
     // Test 2: Simulate hardware LU output sequence
     printf("2. Simulating hardware LU output sequence:\n");
-    uint16_t l_values[band_width * 3]; // 14 ck values * 3 L values each (stopping at ck=13)
-    uint16_t u_values[band_width * 4]; // 14 ck values * 4 U values each (stopping at ck=13)
+    uint16_t l_values[band_width * (size - 1)]; // 14 ck values * 3 L values each (stopping at ck=13)
+    uint16_t u_values[band_width * size];       // 14 ck values * 4 U values each (stopping at ck=13)
     int l_count, u_count;
 
     simulate_hardware_lu_output(l_values, u_values, &l_count, &u_count);
