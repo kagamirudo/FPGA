@@ -16,27 +16,25 @@ This repository contains **research prototypes and artefacts** for a compiler th
 # Clone & enter
 git clone <repo-url> && cd <repo>
 
-# 1. Run a 4×4 mesh test in Verilator
-make SIM=verilator sim            # produces dump.vcd for GTKWave
+# 1. Open a Vivado project (2025.1+)
+#    kung_lu_decom/kung_lu_decom.xpr   (LU decomposition systolic array)
+#    kung_svd/kung_svd.xpr             (SVD systolic array)
 
-# 2. Package as an RTL kernel for Vitis
-make vivado_kernel                # requires Vivado/Vitis 2025.1+
-
-# 3. Generate a mesh net-list from an ISL schedule
-python python/mapper.py examples/fir_domain.isl examples/fir_sched.isl
+# 2. Run the LU I/O library's end-to-end simulation (pure C, no Vivado needed)
+cd kung_lu_support && make run-sim
 ```
 
-See `docs/usage.md` for alternative flows with Xcelium, VCS and xsim.
+Vivado/Vitis-generated project output (`*.cache/`, `*.hw/`, `*.ip_user_files/`,
+`*.runs/`, `*.sim/`, `*.gen/`) is not checked in — Vivado regenerates it on project
+open/build.
 
 ## Folder Structure
 
 ```
-rtl/        SystemVerilog PE and mesh modules
-tb/         Self-checking test-benches
-python/     Polyhedral analysis & code-gen helpers
-scripts/    Vivado & make recipes
-bench/      Example kernels and schedules
-docs/       Design notes and background papers
+kung_lu_decom/    Vivado project: LU decomposition systolic array (VHDL)
+kung_lu_support/  Portable C library + test harness for LU I/O
+kung_svd/         Vivado project: SVD systolic array (VHDL)
+archive/          Superseded early prototypes, kept for reference
 ```
 
 ## Kung Projects
@@ -80,21 +78,6 @@ Vivado project for SVD experiments.
 - TCL helpers: `test_compile.tcl`, `test_sim.tcl`, `run_long_sim.tcl`
 - Simulator/export artifacts: `kung_svd.sim/`, `xsim/`, caches and IP files
 - The included `README.txt` is Vivado-generated; use the TCL scripts above to compile and simulate in batch if desired.
-
-## Sync Workflow for Kung Projects
-
-Use `update.sh` to copy or rsync project folders from your default workspace into this repository, auto-commit with a helpful message, and push to `origin`.
-
-```bash
-# Copy or update from /mnt/d/Materials/Study/HLS/<folder>
-./update.sh kung_lu_decom
-./update.sh kung_lu_support
-./update.sh kung_svd
-```
-
-- First run copies the folder; later runs rsync changes (`--delete` keeps it in sync)
-- You can provide a custom commit message when prompted or accept the default
-- The script will separately commit its own changes and `.gitignore` updates when needed
 
 ## Documentation & References
 
