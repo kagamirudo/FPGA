@@ -337,13 +337,20 @@ void get_result_LU(uint8_t size, uint16_t *l_values, uint16_t *u_values,
     }
 }
 
-// Function to extract L and U matrices from band matrix output
-// This processes the output from lu_io_get_input_matrix to reconstruct L and U
+// Decodes the *input* band matrix produced by lu_io_get_input_matrix() back
+// into A's own lower/upper triangular split (L's off-diagonal here is really
+// -A below the diagonal, U here is really A on/above the diagonal) -- it is
+// the exact inverse of the encoder, so it round-trips A, but band_matrix is
+// the stimulus fed *into* the array before any elimination happens. This is
+// NOT an LU factorization and L*U will not equal A; it only verifies that
+// lu_io_get_input_matrix()'s diagonal encoding is invertible. For an actual
+// LU decomposition use simulate_math_lu() or get_result_LU() (real hardware
+// register readback, post-elimination) instead.
 void extract_LU_from_band_matrix(uint8_t size, uint8_t band_width, uint16_t band_matrix[][band_width],
                                  uint16_t L_matrix[size][size], uint16_t U_matrix[size][size])
 {
     int n = size;
-    int i, j, k, t, t_prime;
+    int i, j, k, tp, delta, t, ii, jj;
 
     // Initialize matrices
     for (i = 0; i < n; i++)
@@ -361,61 +368,28 @@ void extract_LU_from_band_matrix(uint8_t size, uint8_t band_width, uint16_t band
         L_matrix[i][i] = 1;
     }
 
-    // Process L matrix (lower triangular, k < 0)
-    for (k = 1; k < n; k++)
-    { // k = 1, 2, ..., n-1 (corresponds to k = -1, -2, ..., -(n-1))
-        t = 0;
-        t_prime = 0;
-
-        while (t_prime < band_width)
-        { // Use dynamic band_width
-            if (t_prime >= n - 1)
-            {
-                if (((t_prime - (n - 1) - k) % 3) == 0)
-                {
-                    // Extract l(t-k+1, t+1) = -z(t', k)
-                    int row = t - k + 1;
-                    int col = t + 1;
-                    if (row >= 0 && row < n && col >= 0 && col < n)
-                    {
-                        // Get value from band matrix: diag_idx = -k + (n-1)
-                        int diag_idx = -k + (n - 1);
-                        uint16_t value = band_matrix[diag_idx][t_prime];
-                        L_matrix[row][col] = value;
-                    }
-                    t++;
-                }
-            }
-            t_prime++;
-        }
-    }
-
-    // Process U matrix (upper triangular, k >= 0)
-    for (k = 0; k < n; k++)
-    { // k = 0, 1, 2, ..., n-1
-        t = 0;
-        t_prime = 0;
-
-        while (t_prime < band_width)
+    // Exact inverse of lu_io_get_input_matrix(): for k >= 0, band row k+(n-1)
+    // holds A[t][t+k] (-> U) and band row -k+(n-1) holds A[t+k][t] (-> L,
+    // k >= 1), at column tp = 2*k + 3*t, for the same (k, t) pairs the
+    // generator used.
+    for (k = 0; k <= n - 1; k++)
+    {
+        for (tp = 0; tp < band_width; tp++)
         {
-            if (t_prime >= n - 1 && t_prime < 3 * n)
-            {
-                if (((t_prime - (n - 1) - k) % 3) == 0)
-                {
-                    // Extract u(t+1, t+k+1) = z(t', k)
-                    int row = t;
-                    int col = t + k;
-                    if (row >= 0 && row < n && col >= 0 && col < n)
-                    {
-                        // Get value from band matrix: diag_idx = k + (n-1)
-                        int diag_idx = k + (n - 1);
-                        uint16_t value = band_matrix[diag_idx][t_prime];
-                        U_matrix[row][col] = value;
-                    }
-                    t++;
-                }
-            }
-            t_prime++;
+            if (tp < 2 * k)
+                continue;
+            delta = tp - 2 * k;
+            if ((delta % 3) != 0)
+                continue;
+            t = delta / 3;
+            ii = t;
+            jj = t + k;
+            if (ii < 0 || ii >= n || jj < 0 || jj >= n)
+                continue;
+
+            U_matrix[ii][jj] = band_matrix[k + (n - 1)][tp];
+            if (k >= 1)
+                L_matrix[jj][ii] = band_matrix[-k + (n - 1)][tp];
         }
     }
 }
@@ -481,6 +455,23 @@ void simulate_math_lu(uint8_t size, uint8_t format_fraction, uint16_t A[size][si
 }
 
 // Print L or U matrix
+void build_padded_matrix(uint8_t n, uint8_t m, uint8_t format_fraction,
+                         uint16_t A[n][n], uint16_t A_padded[m][m])
+{
+    uint16_t one = convert_fraction_to_hex(1.0f, format_fraction);
+
+    for (int i = 0; i < m; ++i)
+        for (int j = 0; j < m; ++j)
+            A_padded[i][j] = 0;
+
+    for (int i = 0; i < n; ++i)
+        for (int j = 0; j < n; ++j)
+            A_padded[i][j] = A[i][j];
+
+    for (int i = n; i < m; ++i)
+        A_padded[i][i] = one;
+}
+
 void print_matrix(const char *title, uint8_t size, uint16_t matrix[size][size])
 {
     printf("%s:\n", title);

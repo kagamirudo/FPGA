@@ -38,12 +38,13 @@ int main()
 
     print_band_matrix_f32("Generated Band Matrix (float)", band_height, band_width, band_matrix_f32, max_k);
 
-    // Test 3: LU extraction
-    printf("3. LU Matrix Extraction Test:\n");
+    // Test 3: band matrix decode round-trip (NOT an LU factorization -- see
+    // extract_LU_from_band_matrix's comment in lu_io.c)
+    printf("3. Band Matrix Decode Round-Trip Test:\n");
     uint16_t L_matrix[n][n], U_matrix[n][n];
     extract_LU_from_band_matrix(n, band_width, band_matrix, L_matrix, U_matrix);
-    print_matrix("L Matrix", n, L_matrix);
-    print_matrix("U Matrix", n, U_matrix);
+    print_matrix("A Lower Triangle (via L Matrix)", n, L_matrix);
+    print_matrix("A Upper Triangle (via U Matrix)", n, U_matrix);
 
     // Test 4: Hardware simulation
     printf("4. Hardware Simulation Test:\n");

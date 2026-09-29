@@ -21,6 +21,7 @@ kung_lu_support/
 ├── test_lu_io.c         # Lower-level API tests / demos
 ├── example.c            # Minimal example
 ├── simple_test.c        # Simple sanity test
+├── test_padding.c       # Padding-correctness validation (see "Padding Theory" below)
 ├── makefile             # Build configuration (outputs to exe/, objects in obj/)
 ├── exe/                 # Built executables and lib (generated)
 ├── obj/                 # Object files (generated)
@@ -47,6 +48,7 @@ make run-sim
 make run          # Runs lu_io_test
 make example      # Runs lu_io_example
 make simple-test  # Runs simple_test
+make run-padding  # Runs test_padding (block-identity padding correctness)
 
 # Clean generated files (removes exe/ and obj/)
 make clean
@@ -168,14 +170,21 @@ void extract_LU_from_band_matrix(uint8_t size, uint8_t band_width,
                                  uint16_t L_matrix[size][size], 
                                  uint16_t U_matrix[size][size]);
 ```
-Extracts L and U matrices from band matrix output.
+Decodes the *input* band matrix (as produced by `lu_io_get_input_matrix`) back
+into A's own lower/upper triangular split. This is the exact inverse of the
+encoder and round-trips A, but `band_matrix` is the stimulus fed into the
+array *before* any elimination happens — so this is **not** an LU
+factorization, and `L*U != A` in general. Use it only to sanity-check that
+`lu_io_get_input_matrix`'s diagonal encoding is invertible. For a real LU
+decomposition, use `simulate_math_lu()` or `get_result_LU()` (hardware
+register readback, post-elimination) instead.
 
 **Parameters:**
 - `size`: Matrix dimension (e.g., 4 for 4x4 matrix)
 - `band_width`: Width of band matrix (typically 2*(2*n-1))
 - `band_matrix`: Input band matrix
-- `L_matrix`: Output L matrix (lower triangular)
-- `U_matrix`: Output U matrix (upper triangular)
+- `L_matrix`: Output "L" (A's lower triangle, unit diagonal)
+- `U_matrix`: Output "U" (A's upper triangle)
 
 ##### From Hardware Sequence
 ```c
@@ -206,6 +215,16 @@ Converts fixed-point hex to floating-point fraction.
 uint16_t convert_fraction_to_hex(float fraction, uint8_t format_fraction);
 ```
 Converts floating-point fraction to fixed-point hex.
+
+#### Block-Identity Padding
+```c
+void build_padded_matrix(uint8_t n, uint8_t m, uint8_t format_fraction,
+                         uint16_t A[n][n], uint16_t A_padded[m][m]);
+```
+Embeds an n×n matrix `A` into the top-left of an m×m matrix as `[[A, 0], [0, I]]`
+(identity in the bottom-right block, `m >= n`). See "Padding Theory" below for why
+this scheme — and not naive zero-padding — is required to run a smaller matrix
+through hardware sized for a larger one.
 
 ### Visualization Functions
 
@@ -394,10 +413,63 @@ The package implements the Kung-Lu systolic array theory:
 - **For k < 0**: `y(tp,k) = a[t+|k|][t]` where `t = (tp - 2*k)/3`
 - **Rate**: 1/3 (values appear every 3 time steps)
 
-### LU Extraction
+### Band Matrix Decode (`extract_LU_from_band_matrix`)
+- Inverts the encoding above: k < 0 diagonals give back A's lower triangle,
+  k ≥ 0 diagonals give back A's upper triangle. Same rate = 1/3 timing.
+- This only round-trips the *input* stimulus -- no elimination has happened,
+  so the result is **not** an LU factorization (`L*U != A`). For a real
+  decomposition, see `simulate_math_lu()` or `get_result_LU()` below.
+
+### LU Extraction (post-elimination, from hardware/simulated output)
 - **L Matrix**: Lower triangular with diagonal = 1, extracted from k < 0 diagonals
 - **U Matrix**: Upper triangular, extracted from k ≥ 0 diagonals
 - **Pattern**: Both follow rate = 1/3 timing
+
+### Padding Theory
+
+The systolic array's physical size is fixed at build time (say M×M), but a caller
+may want to decompose a smaller n×n matrix (n < M) on that same hardware — for
+example, running a proven 4x4 problem on hardware built for 10x10. The matrix must
+be embedded into an M×M input somehow, and the embedding scheme matters:
+
+**Naive zero-padding is unsafe.** Simply placing A in the top-left corner and
+leaving the rest zero —
+```
+[[A, 0],
+ [0, 0]]
+```
+— creates a matrix that is singular on the extended diagonal: every pivot `U[i][i]`
+for `i >= n` is 0. Doolittle elimination (no pivoting, which is what both this
+hardware and `simulate_math_lu()` implement) divides by the pivot at each step, so
+this produces a divide-by-zero on hardware and an artificial `L[i][i] = 0.0` guard
+value in software — neither of which is a valid decomposition.
+
+**Block-identity padding is the correct scheme.** Embed A as
+```
+[[A, 0],
+ [0, I]]
+```
+i.e. place A in the top-left n×n block and an identity matrix in the bottom-right
+(M-n)×(M-n) block, with zero off-diagonal blocks. Under Doolittle elimination
+without pivoting, this is provably block-diagonal-preserving:
+- While eliminating rows/columns 0..n-1, the bottom-right identity block and the
+  zero off-diagonal blocks are never touched (elimination at step `i < n` only
+  reads/writes rows and columns `>= i`, and the off-diagonal blocks are already
+  zero and stay zero since nothing outside the A block feeds into them).
+- So the top-left n×n block of L and U comes out **identical** to running A alone
+  through an n×n decomposition.
+- The extended pivots are exactly the identity block's diagonal entries — always 1,
+  never zero — so no divide-by-zero occurs on the extension, and the extension's
+  own L/U block is trivially `I`/`I`.
+
+This is what `build_padded_matrix()` implements, and it's why the correctness
+requirement — "the same n×n matrix must produce the same result whether it's run
+standalone or embedded in bigger hardware" — holds. `test_padding.c` validates this
+empirically: it builds several (n, M, A) combinations, decomposes both the
+standalone n×n matrix and the padded M×M matrix via `simulate_math_lu()`, and
+asserts the top-left n×n L/U block matches exactly; it also reproduces the naive
+zero-padding failure mode (zero pivots on the extended diagonal) as a contrast.
+Run it via `make run-padding`.
 
 ## Compilation Flags
 
