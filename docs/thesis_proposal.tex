@@ -1,0 +1,150 @@
+\documentclass[11pt,letterpaper]{article}
+
+\usepackage[margin=0.9in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{parskip}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=black,urlcolor=blue!45!black,citecolor=blue!45!black]{hyperref}
+
+\newcommand{\ttp}[1]{\texttt{\small #1}}
+
+\begin{document}
+
+\begin{center}
+  {\LARGE \bfseries Compiler-Emitted Nearest-Neighbor Systolic Arrays on FPGA}\\[0.4em]
+  {\itshape A Kung-style LU and one-sided Jacobi SVD case study, benchmarked against Vitis HLS}\\[0.8em]
+  {\normalsize MS Thesis Proposal \ $\cdot$ \ Gary Pham \ $\cdot$ \ Drexel ECE}\\
+  {\normalsize Advisor: Prof.\ Prawat Nagvajara \ $\cdot$ \ Draft prepared 2026-09-30 for winter term (Jan 27) start}
+\end{center}
+
+\vspace{0.4em}
+
+\section{Motivation}
+
+FPGA systolic arrays remain one of the most efficient substrates for dense linear algebra, but designers still hand-write RTL for each kernel or accept the area/latency overhead of high-level synthesis. Polyhedral-to-systolic compilers such as AutoSA~\cite{autosa} have shown that schedules can be generated automatically, yet the emitted arrays typically use long-range interconnect and non-streaming interfaces, which complicates system integration on modern AMD/Xilinx platforms where AXI4-Stream is the lingua franca~\cite{ug1399,ug761}.
+
+This thesis argues for the opposite constraint set: \emph{strict nearest-neighbor connectivity and AXI4-Stream--compliant outputs by construction.} The claim is that this constraint pair, once baked into a shared PE template, is expressive enough to cover several important dense-linear-algebra kernels while yielding place-and-route results competitive with, or better than, Vitis HLS on the same C source.
+
+\section{Prior Work Positioning}
+
+FPGA implementations of SVD are dense in the literature. The Brent--Luk--Van~Loan mesh~\cite{brentluk1985} underlies most subsequent two-sided designs, including Hemkumar \& Cavallaro's complex-matrix CORDIC array~\cite{hemkumar1994}, Ma~et~al.'s FPGA SVD processor~\cite{ma2006}, and Ahmedsaid \& Amira's improved systolic array~\cite{ahmedsaid2003}. One-sided (Hestenes-Jacobi) variants trade the two-sided rotation for better parallelism on rectangular matrices; representative work includes Wang \& Zambreno's floating-point Hestenes-Jacobi core~\cite{wang2014}, Karthikeyan's one-bit-rotation CORDIC PEs~\cite{karthikeyan2013}, Kalayc{\i}o\u{g}lu's real-time two-sided design~\cite{kalaycioglu2019}, the UCSB scalable engine with Maximum-Data-Sharing ordering~\cite{liu2020}, and a recent data-stream Jacobi architecture~\cite{dsbjacobi2025}. LU decomposition on systolic arrays traces back to Kung \& Leiserson~\cite{kung1979} and has similarly wide coverage.
+
+The novelty of this thesis is \textbf{not} another SVD or LU accelerator. It is the compiler-plus-template flow, with LU and SVD serving as demonstrators driven from a shared PE template.
+
+\section{Contribution and Thesis Statement}
+
+\begin{quote}\itshape
+A nearest-neighbor AXI4-Stream PE template, combined with a schedule-generation flow, can emit both a Kung-style LU decomposer and a one-sided Jacobi SVD engine from a single hardware template, matching or exceeding Vitis HLS on area $\times$ latency for both kernels on a Kintex-class target.
+\end{quote}
+
+Concretely, the thesis will deliver:
+
+\begin{enumerate}
+  \item A parameterized nearest-neighbor PE template with an AXI4-Stream boundary that respects UG1399 handshake semantics.
+  \item A schedule generator that maps LU and one-sided Jacobi SVD onto $N \times N$ meshes of that template.
+  \item Post-place-and-route benchmarks against Vitis HLS on identical C reference and against the closest prior FPGA-SVD numbers.
+  \item An open-source release of the flow, sufficient for reproducibility.
+\end{enumerate}
+
+\section{Repository Status (as of proposal date)}
+
+Progress already in the working tree, ahead of the winter-term start:
+
+\begin{itemize}
+  \item \ttp{kung\_lu\_decom/} --- VHDL Kung-style LU on a 4$\times$4 nearest-neighbor mesh with divide/multiply-add/register cells and a fixed-point divider. Simulation clean.
+  \item \ttp{kung\_lu\_support/} --- portable C harness that generates stimulus, extracts $L$/$U$ from the hardware output stream, and verifies $A = L \cdot U$. Runs via \ttp{make run-sim}.
+  \item \ttp{kung\_svd/} --- 8$\times$8 one-sided Jacobi SVD prototype: 18-bit Q1.16 PE with Givens rotation (\ttp{svd\_pe.vhd}), vectoring-mode CORDIC angle engine (\ttp{cordic\_rot.vhd}), column-pair Jacobi controller with an FSM \ttp{IDLE $\to$ PAIR $\to$ CORDIC $\to$ BROADCAST} (\ttp{jacobi\_ctrl.vhd}), configurable ROWS$\times$COLS array (\ttp{svd\_array\_core.vhd}), and an AXI4-Stream wrapper (\ttp{svd\_axi\_stream.vhd}). Structural testbench compiles and runs.
+\end{itemize}
+
+Outstanding work before publishable results: (a) numerical golden-reference check on the SVD output stream (currently the testbench prints but does not assert), (b) Vitis HLS baselines on the target board, and (c) post-place-and-route numbers.
+
+\section{Approach}
+
+\subsection{PE template}
+
+The current template exposes N/E/S/W AXI4-Stream ports with \ttp{TVALID}/\ttp{TREADY}/\ttp{TLAST}, a small local register file, and a parameterized arithmetic core. LU uses a divide/subtract/multiply core (\ttp{Div\_cell.vhd}, \ttp{MA\_cell.vhd}, \ttp{M\_cell.vhd}, \ttp{R\_cell.vhd}). SVD uses a Givens-rotation MAC PE plus a shared CORDIC angle engine broadcast from the array edge.
+
+\subsection{SVD case study}
+
+The 8$\times$8 grid runs a one-sided Jacobi schedule: the controller selects column pairs $(0,1),(2,3),\ldots$ then $(1,2),(3,4),\ldots$, feeds pair data to a 16-iteration vectoring-mode CORDIC to obtain $(c,s)$, and broadcasts them to all PEs for the sweep. Fixed-point precision is Q1.16 in 18-bit words. The first milestone is a numerically-verified 4$\times$4 SVD; the second is 8$\times$8 (matching the largest size widely reported in prior two-sided work~\cite{ma2006,ahmedsaid2003}).
+
+\subsection{Baseline and comparators}
+
+\begin{center}
+\begin{tabular}{p{4.7cm} p{2.5cm} p{6.5cm}}
+\toprule
+\textbf{Comparator} & \textbf{Reference} & \textbf{Metric} \\
+\midrule
+Vitis HLS (same C, same board) & Internal baseline & LUT/FF/BRAM/DSP, $F_{\max}$, cycles \\
+Ma~et~al.\ FPGA SVD processor & \cite{ma2006} & Reported cycles \& area, normalized \\
+UCSB scalable Jacobi engine & \cite{liu2020} & Throughput vs. bandwidth \\
+DSB-Jacobi (data-stream) & \cite{dsbjacobi2025} & BRAM footprint, streaming latency \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Six-Month Schedule (Jan 27 -- Jul 24, 2027)}
+
+\begin{center}
+\begin{tabular}{c p{7.2cm} p{6.0cm}}
+\toprule
+\textbf{Weeks} & \textbf{Milestone} & \textbf{Deliverable} \\
+\midrule
+1--3 & Numerical golden reference for SVD; Vitis HLS baselines for LU and 4$\times$4 SVD & Baseline table (LUT/FF/BRAM/DSP, $F_{\max}$, cycles) checked into \ttp{docs/} \\
+4--7 & Fix Jacobi controller edge cases; convergence verification on 8$\times$8 random matrices & Passing testbench with $\|A - U\Sigma V^\top\|$ error plots \\
+8--12 & First post-P\&R numbers on Kintex-7 for both LU and 8$\times$8 SVD & Area/latency table vs. Vitis HLS baseline \\
+13--16 & Extract shared PE/schedule template so LU and SVD emit from one flow & Compiler flow write-up; SVD scale-up study \\
+17--20 & Full benchmark sweep; paper draft (target: FCCM/FPL 2027 or TRETS) & Submitted paper draft; thesis chapters 1--4 in review \\
+21--24 & Thesis defense preparation; PhD application writing sample finalized & Defended thesis, tagged v1.0 open-source release \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Risks and Mitigations}
+
+\begin{itemize}
+  \item \textbf{CORDIC accuracy at fixed-point.} Mitigation: 16-bit fraction starting point per Ma~et~al.~\cite{ma2006}; widen only if reconstruction error exceeds $10^{-3}$ on 8$\times$8 test matrices.
+  \item \textbf{Convergence of the one-sided sweep.} Mitigation: the current design uses a fixed 8-sweep schedule; add off-diagonal-norm tracking to promote to an adaptive stop if convergence is uneven.
+  \item \textbf{Scope creep into rectangular matrices or floating-point.} Mitigation: keep the thesis to square, fixed-point Q1.16; document Hestenes-Jacobi rectangular support as future work.
+  \item \textbf{Board unavailability.} Mitigation: primary target Kintex-7 (already in the lab); simulation-only fallback path exists via the current xsim flow.
+  \item \textbf{Vitis HLS producing surprisingly good baselines.} This is an acceptable outcome; the paper still stands if the compiler flow matches HLS with a fraction of the DSP count or with strictly nearest-neighbor placement, which HLS does not guarantee.
+\end{itemize}
+
+\section{What I Am Asking For}
+
+\begin{enumerate}
+  \item Your read on whether this field --- compiler-emitted nearest-neighbor systolic arrays with LU/SVD as demonstrators --- is still workable as a thesis contribution given the density of prior FPGA-SVD work, or whether you would steer me toward an adjacent framing.
+  \item Confirmation of scope for a six-month MS thesis under your advisement.
+  \item Target-device sign-off (proposed: Kintex-7 already available; open to Zynq UltraScale+ if you prefer for the paper).
+  \item Agreement to co-author the resulting FCCM/FPL/TRETS submission.
+  \item A short kickoff meeting before winter term so weeks 1--3 land on the ground running.
+\end{enumerate}
+
+\section*{References}
+
+\begin{thebibliography}{99}
+\small
+\bibitem{brentluk1985} R.\,P.~Brent, F.\,T.~Luk, and C.~Van~Loan, ``Computation of the singular value decomposition using mesh-connected processors,'' \emph{Journal of VLSI and Computer Systems}, vol.~1, no.~3, pp.~242--270, 1985.
+\bibitem{hemkumar1994} N.\,D.~Hemkumar and J.\,R.~Cavallaro, ``A CORDIC processor array for the SVD of a complex matrix,'' in \emph{SVD and Signal Processing III}, 1994.
+\bibitem{ma2006} Y.~Ma, M.~Kaye, Q.~Wang, et~al., ``An FPGA-based singular value decomposition processor,'' in \emph{Proc.\ IEEE CCECE}, 2006, pp.~1047--1050. \href{https://doi.org/10.1109/CCECE.2006.277524}{doi:10.1109/CCECE.2006.277524}.
+\bibitem{ahmedsaid2003} A.~Ahmedsaid, A.~Amira, and A.~Bouridane, ``Improved SVD systolic array and implementation on FPGA,'' in \emph{Proc.\ IEEE FPT}, 2003, pp.~35--42. \href{https://doi.org/10.1109/FPT.2003.1275730}{doi:10.1109/FPT.2003.1275730}.
+\bibitem{wang2014} X.~Wang and J.~Zambreno, ``An FPGA implementation of the Hestenes--Jacobi algorithm for singular value decomposition,'' in \emph{Proc.\ IEEE IPDPSW}, 2014, pp.~220--227. \href{https://doi.org/10.1109/IPDPSW.2014.32}{doi:10.1109/IPDPSW.2014.32}.
+\bibitem{karthikeyan2013} C.~Karthikeyan et~al., ``FPGA implementation of singular value decomposition,'' \emph{Int.\ Journal of Advanced Research in Computer Science}, 2013.
+\bibitem{kalaycioglu2019} C.~Kalayc{\i}o\u{g}lu et~al., ``An FPGA implementation of singular value decomposition,'' in \emph{Proc.\ IEEE INISTA}, 2019. \href{https://doi.org/10.1109/INISTA.2019.8778279}{doi:10.1109/INISTA.2019.8778279}.
+\bibitem{liu2020} W.~Liu, D.~Wang, and L.~Peng, ``A scalable FPGA engine for parallel acceleration of singular value decomposition,'' in \emph{Proc.\ IEEE ISQED}, 2020. \href{https://web.ece.ucsb.edu/~lip/publications/FPGA-SVD-IEEE-ISQED2020.pdf}{PDF}.
+\bibitem{dsbjacobi2025} Anon., ``Design of a low-latency and parallelizable SVD dataflow architecture on FPGA,'' arXiv:2511.12461, 2025. \href{https://arxiv.org/abs/2511.12461}{arxiv.org/abs/2511.12461}.
+\bibitem{kung1979} H.\,T.~Kung and C.\,E.~Leiserson, ``Systolic arrays (for VLSI),'' in \emph{Sparse Matrix Proc.\ 1978}, SIAM, 1979, pp.~256--282.
+\bibitem{autosa} J.~Wang, L.~Guo, and J.~Cong, ``AutoSA: A polyhedral compiler for high-performance systolic arrays on FPGA,'' in \emph{Proc.\ ACM FPGA}, 2021, pp.~93--104. \href{https://doi.org/10.1145/3431920.3439292}{doi:10.1145/3431920.3439292}.
+\bibitem{ug1399} AMD Xilinx, ``Vitis HLS User Guide (UG1399): AXI4-Stream Interfaces,'' 2025. \href{https://docs.amd.com/r/en-US/ug1399-vitis-hls}{docs.amd.com/r/en-US/ug1399-vitis-hls}.
+\bibitem{ug761} Xilinx, ``AXI Reference Guide (UG761),'' 2017. \href{https://www.xilinx.com/support/documents/ip_documentation/axi_ref_guide/latest/ug761_axi_reference_guide.pdf}{UG761 PDF}.
+\end{thebibliography}
+
+\vspace{1em}
+\noindent\hrulefill\\[0.4em]
+{\footnotesize Prepared by Gary Pham for review by Prof.\ Prawat Nagvajara. Repository: \ttp{/Users/garypham/Drexel/FPGA}. This document is a working proposal; scope and schedule will be revised after our kickoff meeting.}
+
+\end{document}
