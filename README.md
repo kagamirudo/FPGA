@@ -1,105 +1,91 @@
-## Overview
+# Compiler-emitted nearest-neighbor systolic arrays on FPGA
 
-This repository contains **research prototypes and artefacts** for a compiler that maps perfectly- and imperfectly-nested loop algorithms onto 2-D meshes of Processing Elements (PEs) that communicate **only through AXI4-Stream neighbour links**.  The compiler + template flow generates RTL that can be packaged directly as AMD Vitis™ HLS kernels, letting us compare against standard HLS IP in a like-for-like way.  The approach is inspired by recent polyhedral-to-systolic frameworks such as AutoSA ([dl.acm.org][1]) but is unique in (a) enforcing strict nearest-neighbour connectivity and (b) emitting AXI4-Stream–compliant cores out-of-the-box ([docs.amd.com][2], [docs.amd.com][3]).
+MS thesis work by Gary Pham, advised by Prof.&nbsp;Prawat Nagvajara at Drexel ECE.
 
-## Key Features
+The goal is a small compiler + hardware-template flow that emits
+systolic PE meshes with **strict nearest-neighbor connectivity** and
+**AXI4-Stream–compliant boundaries** by construction. LU decomposition
+and one-sided Jacobi SVD are the two case studies driven from the same
+PE template, benchmarked head-to-head against Vitis HLS on the same
+C source.
 
-* **Nearest-neighbour PE template** with AXI4-Stream handshake (`TVALID/TREADY/TLAST`) following UG1399 guidelines ([docs.amd.com][2], [docs.amd.com][4]).
-* **Mesh generator** that scales the template to arbitrary *N × M* topologies.
-* **Polyhedral mapper** (Python/ISL) translating loop schedules into PE co-ordinates.
-* **Reference benchmarks**: FIR, IIR, GEMM, 2-D convolution, LU.
-* **Baseline scripts** to measure cycle counts and resource use against Vitis HLS.
+The thesis proposal is in [docs/thesis_proposal.pdf](docs/thesis_proposal.pdf)
+(source: [docs/thesis_proposal.tex](docs/thesis_proposal.tex)).
 
-## Quick-Start
+## Directory map
+
+| Directory | What's inside | Start here |
+|---|---|---|
+| [`kung_lu_decom/`](kung_lu_decom/) | Vivado project — Kung-style 4×4 LU on an AXI4-Stream PE mesh (VHDL) | [`kung_lu_decom/README.md`](kung_lu_decom/README.md) |
+| [`kung_lu_support/`](kung_lu_support/) | Portable C library + harness that generates stimulus, extracts L/U, and verifies A = L·U | [`kung_lu_support/README.md`](kung_lu_support/README.md) |
+| [`kung_svd/`](kung_svd/) | Vivado project — 8×8 one-sided Jacobi SVD prototype (VHDL). **Algorithm has known gaps — see docs/svd_algorithm_review.md** | [`kung_svd/README.md`](kung_svd/README.md) |
+| [`tools/`](tools/) | Python support scripts (Q1.16 golden-reference generator, verifier) | [`tools/README.md`](tools/README.md) |
+| [`docs/`](docs/) | Thesis proposal, algorithm review, related-work table | [`docs/README.md`](docs/README.md) |
+| [`archive/`](archive/) | Superseded week-01 prototypes, kept for reference | — |
+
+## Status at a glance
+
+- **LU 4×4** — simulated end-to-end, `A = L·U` reconstruction checked
+  in software via `kung_lu_support/make run-sim`.
+- **SVD 8×8 RTL** — compiles and runs, but the current column-pair
+  schedule has three algorithmic deviations from one-sided Jacobi
+  (both PE operands identical, CORDIC fed row-0 scalars not Gram sums,
+  (c,s) broadcast to the whole grid). Documented in
+  [`docs/svd_algorithm_review.md`](docs/svd_algorithm_review.md) with
+  line references and a fix plan.
+- **Golden reference** — Python NumPy-SVD fixtures in `.mem` form at
+  [`kung_svd/kung_svd.srcs/sim_1/new/svd_{input,sigma}.mem`](kung_svd/kung_svd.srcs/sim_1/new/).
+  Regenerate and self-check with `tools/svd_golden_ref.py` and
+  `tools/verify_golden.py`.
+- **Vitis HLS baselines, post-P&R numbers** — not yet collected
+  (planned for weeks 1–3 of the winter-term schedule).
+
+## Quick-start
 
 ```bash
-# Clone & enter
-git clone <repo-url> && cd <repo>
-
-# 1. Open a Vivado project (2025.1+)
-#    kung_lu_decom/kung_lu_decom.xpr   (LU decomposition systolic array)
-#    kung_svd/kung_svd.xpr             (SVD systolic array)
-
-# 2. Run the LU I/O library's end-to-end simulation (pure C, no Vivado needed)
+# LU end-to-end (pure C, no Vivado needed)
 cd kung_lu_support && make run-sim
+
+# Regenerate SVD golden reference (needs Python 3 + numpy)
+python3 -m venv .venv && .venv/bin/pip install numpy
+.venv/bin/python tools/svd_golden_ref.py
+.venv/bin/python tools/verify_golden.py          # confirms PASS
+
+# Open the Vivado projects (2025.1+)
+#   kung_lu_decom/kung_lu_decom.xpr
+#   kung_svd/kung_svd.xpr
 ```
 
-Vivado/Vitis-generated project output (`*.cache/`, `*.hw/`, `*.ip_user_files/`,
-`*.runs/`, `*.sim/`, `*.gen/`) is not checked in — Vivado regenerates it on project
-open/build.
+Vivado's generated directories (`*.cache/`, `*.hw/`, `*.ip_user_files/`,
+`*.runs/`, `*.sim/`, `*.gen/`) are gitignored — Vivado regenerates them
+on project open or build.
 
-## Folder Structure
+## Thesis plan (abbreviated)
 
-```
-kung_lu_decom/    Vivado project: LU decomposition systolic array (VHDL)
-kung_lu_support/  Portable C library + test harness for LU I/O
-kung_svd/         Vivado project: SVD systolic array (VHDL)
-archive/          Superseded early prototypes, kept for reference
-```
+Six-month MS schedule starting winter term (Jan 27, 2027):
 
-## Kung Projects
+| Phase | Deliverable |
+|---|---|
+| Weeks 1–3 | Vitis HLS baselines for LU and SVD on the target board; SVD testbench assertions wired to the golden reference |
+| Weeks 4–7 | Fix one-sided Jacobi algorithmic gaps; convergence on random 8×8 matrices |
+| Weeks 8–12 | Post-P&R numbers vs. Vitis HLS and vs. Ma 2006 / UCSB 2020 / DSB-Jacobi 2025 |
+| Weeks 13–20 | Compiler generalization — shared template for LU + SVD; paper draft (FCCM / FPL / TRETS) |
+| Weeks 21–24 | Thesis defense; v1.0 open-source release |
 
-This repository includes three project areas prefixed with `kung_`, which contain the core work you are developing around LU decomposition and SVD on FPGA.
+Full plan, risks, and references are in the
+[proposal PDF](docs/thesis_proposal.pdf).
 
-### `kung_lu_decom/`
+## References & related work
 
-Vivado project for LU decomposition using a Kung-style systolic array.
+See [`docs/related_work.md`](docs/related_work.md) for a comparison
+table against Ma 2006, Ahmedsaid 2003, Wang 2014, Kalaycıoğlu 2019,
+UCSB 2020, and DSB-Jacobi arXiv 2025. Vitis HLS and AXI4-Stream links:
 
-- Open in Vivado (2025.1+):
-  - Double-click `kung_lu_decom/kung_lu_decom.xpr`, or
-  - Launch Vivado and File → Open Project → select the `.xpr`.
-- Batch flow helpers:
-  - `run.tcl`: project-script to regenerate or run flows non-interactively.
-- Generated directories:
-  - `kung_lu_decom.hw/`, `kung_lu_decom.sim/`, `kung_lu_decom.runs/`, `kung_lu_decom.srcs/`, caches, and IP files.
-
-### `kung_lu_support/`
-
-Portable C library and test harness that generate inputs, extract L/U from hardware-like streams, and validate results. See `kung_lu_support/README.md` for full API docs.
-
-- Key files: `lu_io.h`, `lu_io.c`, `test_lu_simulation.c`, `test_lu_io.c`, `simple_test.c`, `example.c`
-- Build with make:
-  ```bash
-  cd kung_lu_support
-  make all         # build library and executables into exe/
-  make run-sim     # recommended: end-to-end LU simulation flow
-  # other targets: make run, make example, make simple-test, make clean
-  ```
-- What `run-sim` does:
-  - Creates a 4×4 test matrix A
-  - Simulates the hardware output sequence timing/order
-  - Extracts L and U and verifies that L×U reconstructs A
-
-### `kung_svd/`
-
-Vivado project for SVD experiments.
-
-- Open in Vivado: `kung_svd/kung_svd.xpr`
-- TCL helpers: `test_compile.tcl`, `test_sim.tcl`, `run_long_sim.tcl`
-- Simulator/export artifacts: `kung_svd.sim/`, `xsim/`, caches and IP files
-- The included `README.txt` is Vivado-generated; use the TCL scripts above to compile and simulate in batch if desired.
-
-## Documentation & References
-
-* **Vitis HLS User Guide UG1399** – AXI4-Stream interface rules ([docs.amd.com][2], [docs.amd.com][3]).
-* **AXI Reference Guide UG761** – protocol signals & timing ([xilinx.com][5]).
-* **AutoSA: A Polyhedral Compiler for High-Performance Systolic Arrays on FPGA** (FPGA’21 Best Paper) ([dl.acm.org][1]).
-* AutoSA GitHub repository for build scripts ([github.com][6]).
-* Additional AXI4-Stream interface notes in PG256 ([docs.amd.com][7]).
+- Vitis HLS UG1399 — [AXI4-Stream interfaces](https://docs.amd.com/r/en-US/ug1399-vitis-hls)
+- AXI Reference Guide UG761 — [protocol signals & timing](https://www.xilinx.com/support/documents/ip_documentation/axi_ref_guide/latest/ug761_axi_reference_guide.pdf)
+- AutoSA (FPGA'21) — [polyhedral compiler for systolic arrays](https://dl.acm.org/doi/10.1145/3431920.3439292), [GitHub](https://github.com/UCLA-VAST/AutoSA)
 
 ## Contributors
 
-* **Instructor:** Prof. Prawat Nagvajara
-* **Student / Lead Author:** Gary Pham
-
----
-
-This README gives a high-level view; for details on algorithmic mapping, hardware micro-architecture, and result tables, consult `docs/design_notes.md` and the citation list above.
-
-[1]: https://dl.acm.org/doi/10.1145/3431920.3439292?utm_source=chatgpt.com "A Polyhedral Compiler for High-Performance Systolic Arrays on FPGA"
-[2]: https://docs.amd.com/r/en-US/ug1399-vitis-hls/How-AXI4-Stream-is-Implemented?utm_source=chatgpt.com "How AXI4-Stream is Implemented - 2025.1 English - UG1399"
-[3]: https://docs.amd.com/r/en-US/ug1399-vitis-hls/How-AXI4-Stream-Works?utm_source=chatgpt.com "How AXI4-Stream Works - 2025.1 English - UG1399"
-[4]: https://docs.amd.com/r/en-US/ug1399-vitis-hls/AXI4-Stream-Interfaces?utm_source=chatgpt.com "AXI4-Stream Interfaces - 2025.1 English - UG1399"
-[5]: https://www.xilinx.com/support/documents/ip_documentation/axi_ref_guide/latest/ug761_axi_reference_guide.pdf?utm_source=chatgpt.com "[PDF] Xilinx, UG761 AXI Reference Guide"
-[6]: https://github.com/UCLA-VAST/AutoSA?utm_source=chatgpt.com "AutoSA: Polyhedral-Based Systolic Array Compiler - GitHub"
-[7]: https://docs.amd.com/r/en-US/pg256-sdfec-integrated-block/AXI4-Stream-Interface?utm_source=chatgpt.com "AXI4-Stream Interface - 1.1 English - PG256"
+- **Advisor:** Prof. Prawat Nagvajara
+- **Student / Lead Author:** Gary Pham
