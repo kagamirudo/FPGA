@@ -89,6 +89,23 @@ sigma[7]: expected=4631   got=4635   diff=4   ok
 SVD CHECK: PASS (all 8 singular values within tol)
 ```
 
+## `sim_pair.sh` + `pair_pipeline_golden.py`
+
+Standalone validation of `svd_pair_pipeline` — the self-contained
+one-pair rotation unit built in session 2 of the
+[BLV grid plan](../docs/blv_grid_plan.md). This is the module that
+session 3 will instantiate N/2 times inside the BLV grid.
+
+```bash
+tools/sim_pair.sh          # full log
+tools/sim_pair.sh -q       # terse: row diff lines + PASS/FAIL
+```
+
+The script regenerates `pair_input.mem` and `pair_output.mem` via
+`pair_pipeline_golden.py` (NumPy reference for one `α = ⟨aₚ,aₚ⟩`,
+`β = ⟨aq,aq⟩`, `γ = ⟨aₚ,aq⟩` + angle + Givens step), then runs the
+nvc testbench. Expected: all 8 rows within ~3 ULPs of the reference.
+
 ## `round_robin_schedule.py`
 
 Generates and verifies the Brent-Luk-Van Loan parallel Jacobi

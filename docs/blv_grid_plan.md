@@ -77,15 +77,18 @@ step starts. **No session leaves the tree in a broken state.**
 - This plan doc.
 - No RTL changes. Current serializer still passes `tools/sim_svd.sh -n 8 -q`.
 
-### Session 2 — new PE module, old orchestrator still used
+### Session 2 — new PE module, old orchestrator still used ✅ **DONE**
 
-- New `svd_pair_pipeline.vhd` that wraps `svd_gram + svd_angle_cordic
-  + inline-Givens` as one entity.
-- Current `svd_jacobi_top` continues to call these pieces directly.
-- `svd_pair_pipeline` is instantiated and tested alone with a tiny
-  tb (one pair in → updated columns out), compared against SciPy
-  reference.
-- No change in top-level behavior; serializer still passes.
+- `svd_pair_pipeline.vhd` wraps `svd_gram + svd_angle_cordic +
+  inline-Givens` as one entity. Caller-driven row addressing via
+  `req_phase + req_row_idx + req_valid`, so the pipeline publishes
+  which row it wants and the caller presents (in_a_p, in_a_q)
+  combinationally.
+- `svd_jacobi_top` is untouched and still passes the full SVD
+  regression at N=8 (12,512 cycles, max 7 ULP err).
+- `tb_pair_pipeline` validates one pair against a Python golden
+  (`tools/pair_pipeline_golden.py`): all 8 rows match within 3 ULP.
+- Reproduce with `tools/sim_pair.sh -q` → `PAIR CHECK: PASS`.
 
 ### Session 3 — grid controller, N=4 first
 
