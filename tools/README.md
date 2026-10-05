@@ -89,6 +89,22 @@ sigma[7]: expected=4631   got=4635   diff=4   ok
 SVD CHECK: PASS (all 8 singular values within tol)
 ```
 
+## `sim_blv.sh`
+
+End-to-end simulation of the BLV grid orchestrator
+(`svd_jacobi_blv`) at N=4, which runs 2 pair pipelines in parallel.
+Session 3 of [`docs/blv_grid_plan.md`](../docs/blv_grid_plan.md).
+
+```bash
+tools/sim_blv.sh          # full log
+tools/sim_blv.sh -q       # terse
+```
+
+Expected output: `BLV CHECK: PASS` at ~604 cycles (vs serializer's
+1,159 cycles for N=4 → **1.9× speedup**). Fixtures regenerated into
+`blv_input.mem` / `blv_sigma.mem` so the serializer's
+`svd_input.mem` is not disturbed.
+
 ## `sim_pair.sh` + `pair_pipeline_golden.py`
 
 Standalone validation of `svd_pair_pipeline` — the self-contained

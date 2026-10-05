@@ -90,13 +90,28 @@ step starts. **No session leaves the tree in a broken state.**
   (`tools/pair_pipeline_golden.py`): all 8 rows match within 3 ULP.
 - Reproduce with `tools/sim_pair.sh -q` → `PAIR CHECK: PASS`.
 
-### Session 3 — grid controller, N=4 first
+### Session 3 — grid controller, N=4 first ✅ **DONE**
 
-- New `svd_jacobi_blv.vhd` orchestrator that instantiates N/2 copies
-  of `svd_pair_pipeline` and routes pairs from the schedule ROM.
-- Only wired up at N=4 (2 parallel pipelines, 3 steps/sweep).
-- Side-by-side: tb runs both serializer and BLV at N=4, compares
-  singular values and cycle counts.
+- `svd_jacobi_blv.vhd` orchestrator instantiates `PAIR_UNITS = N/2`
+  copies of `svd_pair_pipeline` in lockstep. Hardcoded N=4 schedule
+  ROM (3 steps × 2 pairs). Register-file matrix A shared;
+  disjoint-pairs invariant means no R/W conflicts within a step.
+- Numerical result at N=4 (verified by `tools/sim_blv.sh -q`):
+
+  | sigma | expected | got | diff |
+  |---|---|---|---|
+  | 0 | 54774 | 54774 | 0 |
+  | 1 | 38310 | 38310 | 0 |
+  | 2 | 34301 | 34299 | 2 |
+  | 3 |  8063 |  8054 | 9 |
+
+  **BLV CHECK: PASS**, max 9 ULP (serializer baseline was 13 ULP).
+
+- Cycle count: **604 cycles** vs serializer's **1,159 cycles** =
+  **1.9× speedup at N=4**.
+- Reproduce: `tools/sim_blv.sh -q`.
+- Serializer regression (`tools/sim_svd.sh -n 8 -q`) and pair
+  regression (`tools/sim_pair.sh -q`) both still PASS.
 
 ### Session 4 — scale to N=8 and N=16
 
