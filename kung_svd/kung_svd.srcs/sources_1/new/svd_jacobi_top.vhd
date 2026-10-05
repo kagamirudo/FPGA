@@ -88,7 +88,11 @@ architecture rtl of svd_jacobi_top is
   signal gram_row_idx : integer range 0 to ROWS;
   signal gram_x_vec   : data_t;
   signal gram_y_vec   : data_t;
+  signal gram_skip    : std_logic;
   signal gram_valid   : std_logic;
+
+  -- Diagnostic: pairs skipped per sweep (reported via `report`, non-synth).
+  signal skip_cnt_sweep : integer := 0;
 
   -- CORDIC handshake
   signal cordic_start : std_logic;
@@ -117,6 +121,7 @@ begin
       row_idx   => gram_row_idx,
       x_vec     => gram_x_vec,
       y_vec     => gram_y_vec,
+      skip      => gram_skip,
       valid_out => gram_valid
     );
 
@@ -161,9 +166,10 @@ begin
   begin
     if rising_edge(clk) then
       if rst_n = '0' then
-        state         <= LOAD_WAIT;
-        load_cnt      <= 0;
-        start_pending <= '0';
+        state          <= LOAD_WAIT;
+        load_cnt       <= 0;
+        start_pending  <= '0';
+        skip_cnt_sweep <= 0;
         p_idx        <= 0;
         q_idx        <= 1;
         sweep_cnt    <= 0;
@@ -216,8 +222,15 @@ begin
 
           when GRAM_WAIT =>
             if gram_valid = '1' then
-              cordic_start <= '1';
-              state        <= CORDIC_RUN;
+              if gram_skip = '1' then
+                -- Pair is already orthogonal to threshold precision:
+                -- skip CORDIC + APPLY, go straight to the next pair.
+                skip_cnt_sweep <= skip_cnt_sweep + 1;
+                state <= NEXT_PAIR;
+              else
+                cordic_start <= '1';
+                state        <= CORDIC_RUN;
+              end if;
             end if;
 
           when CORDIC_RUN =>
@@ -274,7 +287,11 @@ begin
                   q_idx     <= 1;
                   report "svd_jacobi_top: completed sweep "
                          & integer'image(sweep_cnt + 1)
+                         & " (skipped "
+                         & integer'image(skip_cnt_sweep)
+                         & " pairs)"
                          severity note;
+                  skip_cnt_sweep <= 0;
                   state <= SWEEP_DONE;
                 end if;
               else

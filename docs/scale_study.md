@@ -1,4 +1,9 @@
-# SVD scale study (nvc, 2026-10-05)
+# SVD scale study (nvc)
+
+**Last updated 2026-10-05 after enabling threshold-skip and
+auto-prescaled Gram outputs in `svd_gram.vhd`.** See the "n=16
+precision floor" subsection below for the delta.
+
 
 Measures the one-sided Jacobi SVD core (`svd_jacobi_top` +
 `svd_gram` + `svd_angle_cordic`) at three matrix sizes against
@@ -40,36 +45,49 @@ Q1.16 (equivalent to ~1e-3 relative at the top singular value).
 | N  | Max abs diff (ULP) | Max rel err | Verdict                       |
 |----|--------------------|-------------|-------------------------------|
 | 4  | 13                 | 2.4e-4      | **PASS** (all 4 within tol)   |
-| 8  | 78                 | 8.5e-4      | **PASS** (all 8 within tol)   |
-| 16 | 6,611              | 7.8e-2      | **FAIL** (3 of 16 within tol) |
+| 8  | 81                 | 8.8e-4      | **PASS** (all 8 within tol)   |
+| 16 | 392                | 3.9e-3      | **FAIL** (6 of 16 within tol) |
 
-### n=16 convergence pathology
+### n=16 precision floor (after threshold+prescale)
 
-At N=16 with 16 cyclic Jacobi sweeps, the top two singular values
-*swap*:
+Enabled in `svd_gram.vhd`:
 
-```
-sigma[0]: expected=99767  got=93306  diff=6461
-sigma[1]: expected=85058  got=91669  diff=6611
-```
+- **Threshold-skip**: a pair with `2|γ| < (α+β) >> 20` is already
+  orthogonal to simulation noise; the orchestrator skips CORDIC and
+  the Givens apply, saves ~25 cycles per skipped pair.
+- **Auto-prescaled Gram outputs**: before feeding CORDIC, the shared
+  right-shift is chosen so `max(|α-β|, |2γ|)` sits at the top of
+  Q1.16 instead of being truncated. Preserves the ratio
+  `tan(2θ) = 2γ/(α-β)` with more mantissa bits.
 
-Classical cyclic Jacobi exhibits slow convergence when adjacent
-singular values are close in magnitude (here 99767 and 85058, ratio
-1.17). This is a known weakness of the row-cyclic schedule and is
-documented in Golub & Van Loan (Matrix Computations, §8.4). Possible
-remedies for future work:
+Impact at n=16: max abs diff dropped **6,611 → 392 ULP (17× better)**,
+and the pathological swap of the top two singular values is gone
+(99767 and 85058 come out in the correct order). The residual error
+is now at the Q1.16 **precision floor**, not a scheduling pathology:
+each Givens rotation drops ~2^-16 bits of mantissa, 120 rotations/sweep
+× 16 sweeps = 1920 rotation steps × noise, which accumulates faster
+than the diagonal shrinks.
 
-1. **Round-robin tournament scheduling** (de Rijk 1989) which has
-   better worst-case convergence than lexicographic cyclic.
-2. **Threshold Jacobi** which skips pairs whose off-diagonal entry
-   is below a tolerance, concentrating work on the slow modes.
-3. **Wider accumulators / mantissa** — the Gram α, β, γ are rounded
-   back to Q1.16 before CORDIC, which caps angle precision at
-   ~2^-16 radians. At larger N this is a precision floor that
-   limits final error even with more sweeps.
-4. **Converge-on-condition** — replace the fixed sweep count with
-   an off-diagonal-Frobenius-norm threshold; stop when below
-   `2^-10 · ||A||_F`.
+Doubling the sweep count (SWEEPS=2N=32) made it **worse** (max 755
+ULP) because more rotations = more accumulated noise. **The design
+is precision-limited, not sweep-limited.**
+
+Remedies for future work:
+
+1. **Wider internal datapath** — carry (α-β) and 2γ as full 24-32
+   bit values through CORDIC instead of truncating back to Q1.16.
+   Addresses the actual root cause.
+2. **BLV parallel ordering** — Brent-Luk-Van Loan 1985 mesh of
+   2×2 PEs. Convergence per sweep is comparable to cyclic, but
+   each sweep is ~8× faster (parallel rotations) and avoids the
+   row-cyclic "trap pair" sequences.
+3. **de Rijk pivoting** — argmax-column-norm reorder before each
+   subsweep. Our Gram already computes α = ‖aₚ‖² for free, so the
+   extra cost is just an argmax tree.
+4. **QR preconditioning** (Drmač-Veselić, LAPACK Working Note 169)
+   — pre-factor A = QR, run Jacobi on R only. Often converges in
+   1-3 sweeps. Adds a Kung-style QR kernel to the thesis's
+   compiler-template story as a bonus.
 
 For the thesis, N ≤ 8 is the operating range reported in the
 comparison papers (Ma 2006, Ahmedsaid 2003, Kalaycıoğlu 2019) and

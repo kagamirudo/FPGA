@@ -28,13 +28,15 @@ The thesis proposal is in [docs/thesis_proposal.pdf](docs/thesis_proposal.pdf)
 - **LU 4×4** — simulated end-to-end, `A = L·U` reconstruction checked
   in software via `kung_lu_support/make run-sim`.
 - **SVD scale study** — simulated end-to-end in nvc at N ∈ {4, 8, 16}
-  with `SWEEPS = N`:
+  with `SWEEPS = N`, threshold-skip + auto-prescaled Gram outputs:
   - **N = 4**: PASS, 1,159 cycles, max 13 ULP diff (2.4e-4 rel err).
-  - **N = 8**: PASS, 12,555 cycles, max 78 ULP diff (8.5e-4 rel err).
-  - **N = 16**: FAIL (3/16 within tol) — classic cyclic-Jacobi slow
-    convergence on close singular values. Documented in
-    [`docs/scale_study.md`](docs/scale_study.md) as a publishable
-    scaling-limit result, not a bug.
+  - **N = 8**: PASS, 12,512 cycles, max 81 ULP diff (8.8e-4 rel err).
+  - **N = 16**: FAIL (6/16 within tol), max 392 ULP diff (3.9e-3 rel
+    err). Threshold+prescale closed the pathological singular-value
+    swap at n=16 (6611 → 392 ULP, **17× improvement**). Residual
+    error is now at the Q1.16 precision floor; closing it needs a
+    wider internal datapath. See
+    [`docs/scale_study.md`](docs/scale_study.md).
 
   Reproduce with `tools/sim_svd.sh -n N -q`. The three algorithmic
   deviations identified in

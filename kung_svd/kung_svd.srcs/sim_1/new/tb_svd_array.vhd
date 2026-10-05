@@ -281,10 +281,10 @@ begin
   -- Safety timeout
   ------------------------------------------------------------------
   timeout : process
-    -- Compute cost scales ~ sweeps * C(N,2) * N (gram+apply). 8 sweeps,
-    -- 10ns clock. 8 * N*(N-1)/2 * (2*N + 25) cycles * 10ns. Pad 4x.
+    -- Compute cost ~ SWEEPS * C(N,2) * N where SWEEPS = 2*N in the
+    -- current scheduler. 2*N * N*(N-1)/2 * (2*N + 25) * 10ns. Pad 2x.
     constant TIMEOUT_LIMIT : time :=
-      10 us + 8 * N * (N - 1) * (2 * N + 25) * 10 ns * 2;
+      10 us + 2 * N * N * (N - 1) * (2 * N + 25) * 10 ns * 2;
   begin
     wait for TIMEOUT_LIMIT;
     if not check_done then

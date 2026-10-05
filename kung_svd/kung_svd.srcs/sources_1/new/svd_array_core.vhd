@@ -56,8 +56,11 @@ begin
       DATA_W => DATA_W,
       ROWS   => ROWS,
       COLS   => COLS,
-      -- Cyclic Jacobi convergence: 8 sweeps at N=8, scales roughly linearly.
-      -- Empirical: N=16 needs ~16 sweeps to meet 2^-10 tolerance.
+      -- Classical cyclic Jacobi needs ~N sweeps for quadratic
+      -- convergence. More sweeps actually HURT accuracy here because
+      -- each rotation injects ~2^-16 Q1.16-truncation noise and the
+      -- noise accumulates faster than the diagonal mass shrinks.
+      -- See docs/scale_study.md.
       SWEEPS => COLS
     )
     port map (
