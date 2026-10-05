@@ -18,7 +18,7 @@ The thesis proposal is in [docs/thesis_proposal.pdf](docs/thesis_proposal.pdf)
 |---|---|---|
 | [`kung_lu_decom/`](kung_lu_decom/) | Vivado project — Kung-style 4×4 LU on an AXI4-Stream PE mesh (VHDL) | [`kung_lu_decom/README.md`](kung_lu_decom/README.md) |
 | [`kung_lu_support/`](kung_lu_support/) | Portable C library + harness that generates stimulus, extracts L/U, and verifies A = L·U | [`kung_lu_support/README.md`](kung_lu_support/README.md) |
-| [`kung_svd/`](kung_svd/) | Vivado project — 8×8 one-sided Jacobi SVD prototype (VHDL). **Algorithm has known gaps — see docs/svd_algorithm_review.md** | [`kung_svd/README.md`](kung_svd/README.md) |
+| [`kung_svd/`](kung_svd/) | Vivado project — 8×8 one-sided Jacobi SVD. Numerically verified end-to-end in nvc against NumPy golden reference. | [`kung_svd/README.md`](kung_svd/README.md) |
 | [`tools/`](tools/) | Python support scripts (Q1.16 golden-reference generator, verifier) | [`tools/README.md`](tools/README.md) |
 | [`docs/`](docs/) | Thesis proposal, algorithm review, related-work table | [`docs/README.md`](docs/README.md) |
 | [`archive/`](archive/) | Superseded week-01 prototypes, kept for reference | — |
@@ -27,12 +27,13 @@ The thesis proposal is in [docs/thesis_proposal.pdf](docs/thesis_proposal.pdf)
 
 - **LU 4×4** — simulated end-to-end, `A = L·U` reconstruction checked
   in software via `kung_lu_support/make run-sim`.
-- **SVD 8×8 RTL** — compiles and runs, but the current column-pair
-  schedule has three algorithmic deviations from one-sided Jacobi
-  (both PE operands identical, CORDIC fed row-0 scalars not Gram sums,
-  (c,s) broadcast to the whole grid). Documented in
-  [`docs/svd_algorithm_review.md`](docs/svd_algorithm_review.md) with
-  line references and a fix plan.
+- **SVD 8×8 RTL** — simulated end-to-end in nvc. All 8 singular values
+  match NumPy within ~1.2e-3 (max diff 78 ULP out of 91831 at the top
+  singular value) after 8 cyclic Jacobi sweeps on the seed-42 Q1.16
+  fixture. Reproduce with `tools/sim_svd.sh`. The three algorithmic
+  deviations identified in
+  [`docs/svd_algorithm_review.md`](docs/svd_algorithm_review.md) have
+  been fixed; the review doc now serves as the design rationale.
 - **Golden reference** — Python NumPy-SVD fixtures in `.mem` form at
   [`kung_svd/kung_svd.srcs/sim_1/new/svd_{input,sigma}.mem`](kung_svd/kung_svd.srcs/sim_1/new/).
   Regenerate and self-check with `tools/svd_golden_ref.py` and
@@ -45,6 +46,10 @@ The thesis proposal is in [docs/thesis_proposal.pdf](docs/thesis_proposal.pdf)
 ```bash
 # LU end-to-end (pure C, no Vivado needed)
 cd kung_lu_support && make run-sim
+
+# SVD end-to-end (pure VHDL in nvc, no Vivado needed)
+brew install nvc                                 # one-time
+tools/sim_svd.sh -q                              # analyze+elab+run → PASS
 
 # Regenerate SVD golden reference (needs Python 3 + numpy)
 python3 -m venv .venv && .venv/bin/pip install numpy

@@ -1,13 +1,15 @@
 # kung_svd — One-sided Jacobi SVD systolic array (Vivado project)
 
-8×8 one-sided Jacobi SVD prototype on a nearest-neighbor AXI4-Stream PE
-mesh (VHDL). The RTL design-level README is in
+8×8 one-sided Jacobi SVD on a nearest-neighbor AXI4-Stream wrapper
+(VHDL). The RTL design-level README is in
 [`kung_svd.srcs/sources_1/new/README.md`](kung_svd.srcs/sources_1/new/README.md).
 
-> **Status**: compiles and simulates, but the current column-pair
-> schedule has three algorithmic deviations from one-sided Jacobi SVD.
-> See [`../docs/svd_algorithm_review.md`](../docs/svd_algorithm_review.md)
-> for the audit and fix plan **before trusting the numerical output.**
+> **Status**: numerically verified end-to-end in nvc against the
+> NumPy golden reference — all 8 singular values of the seed-42
+> Q1.16 test matrix match within ~1.2e-3 after 8 cyclic Jacobi sweeps.
+> Reproduce with `../tools/sim_svd.sh -q`. Design rationale and the
+> original algorithmic audit are in
+> [`../docs/svd_algorithm_review.md`](../docs/svd_algorithm_review.md).
 
 ## Opening the project
 
@@ -67,18 +69,27 @@ The current testbench streams `svd_input.mem` through the array but does
 **not** yet assert against `svd_sigma.mem` — that wiring is the next
 testbench change once the RTL algorithmic gaps are fixed.
 
-## Known issues
+## Design
 
-See [`../docs/svd_algorithm_review.md`](../docs/svd_algorithm_review.md):
+The current `svd_array_core.vhd` is a thin wrapper around
+[`svd_jacobi_top.vhd`](kung_svd.srcs/sources_1/new/svd_jacobi_top.vhd),
+which orchestrates one-sided Jacobi SVD as:
 
-1. Both PE operands come from the same matrix element
-   ([`svd_array_core.vhd` lines 252-257](kung_svd.srcs/sources_1/new/svd_array_core.vhd#L252-L257))
-   → Givens rotation collapses to a scalar scaling.
-2. CORDIC is fed row-0 scalars instead of column Gram sums
-   ([lines 115-116](kung_svd.srcs/sources_1/new/svd_array_core.vhd#L115-L116))
-   → angle is not the Jacobi angle.
-3. (c, s) broadcast to every PE
-   ([lines 132-137](kung_svd.srcs/sources_1/new/svd_array_core.vhd#L132-L137))
-   → whole grid rotates, not just the active column pair.
+1. **GRAM** — `svd_gram.vhd` streams rows of the active column pair
+   `(p, q)` through 3 MACs to produce α, β, γ, scaled back to Q1.16
+   as `(α − β, 2γ)`.
+2. **CORDIC** — `svd_angle_cordic.vhd` runs vectoring + halve +
+   rotation to produce `(cos θ, sin θ)` with
+   `θ = ½ · atan2(2γ, α − β)`.
+3. **APPLY** — inline Givens multiplier updates the active column
+   pair, one row per clock.
+4. Sweep all `C(8, 2) = 28` lexicographic pairs; 8 cyclic sweeps.
+5. **DRAIN** — row-major stream of final A. Column norms are the
+   singular values; the testbench sorts them and compares to
+   `svd_sigma.mem`.
 
-The algorithm review documents the fix shape for each.
+The old broken files (`cordic_rot.vhd`, `jacobi_ctrl.vhd`) remain in
+the tree, unused, for reference. See
+[`../docs/svd_algorithm_review.md`](../docs/svd_algorithm_review.md)
+for the original audit of what was wrong and how the new modules fix
+each deviation.

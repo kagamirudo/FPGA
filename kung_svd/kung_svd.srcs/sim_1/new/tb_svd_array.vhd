@@ -52,13 +52,14 @@ architecture rtl of tb_svd_array is
   signal recv_done    : boolean := false;
   signal check_done   : boolean := false;
   signal check_pass   : boolean := false;
+  signal timeout_fire : boolean := false;
 
   -- Storage for the drained matrix (row-major Q1.16 integers)
   type   int_arr_t is array (natural range <>) of integer;
   signal drained    : int_arr_t(0 to ROWS_C*COLS_C-1) := (others => 0);
   signal recv_cnt   : integer                         := 0;
 
-  function read_mem_file (fname : string; n : integer) return int_arr_t is
+  impure function read_mem_file (fname : string; n : integer) return int_arr_t is
     file     f    : text open read_mode is fname;
     variable l    : line;
     variable v    : integer;
@@ -111,7 +112,7 @@ begin
   ------------------------------------------------------------------
   clk_gen : process
   begin
-    while not check_done loop
+    while not (check_done or timeout_fire) loop
       aclk <= '0';
       wait for CLK_PERIOD/2;
       aclk <= '1';
@@ -264,7 +265,7 @@ begin
     wait for 200 us;
     if not check_done then
       report "TB: timeout before check completed" severity failure;
-      check_done <= true;
+      timeout_fire <= true;
     end if;
     wait;
   end process;

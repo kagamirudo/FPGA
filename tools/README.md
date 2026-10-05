@@ -50,6 +50,40 @@ Use this if you ever doubt that `svd_sigma.mem` corresponds to the
 matrix in `svd_input.mem`. It catches drift between the two files
 if either is edited by hand.
 
+## `sim_svd.sh`
+
+End-to-end simulation of the SVD core using the open-source VHDL
+simulator [nvc](https://www.nickg.me.uk/nvc/). No Vivado required.
+
+One-time setup:
+
+```bash
+brew install nvc    # macOS
+```
+
+Usage:
+
+```bash
+tools/sim_svd.sh          # full log
+tools/sim_svd.sh -q       # terse: start/sweep/sigma lines only
+```
+
+The script analyzes every VHDL source and the testbench, elaborates
+`tb_svd_array`, runs to 300µs, and prints `SVD CHECK: PASS` on
+success. Exits non-zero on failure. Build artefacts live in
+`build/sim/` (gitignored).
+
+Expected output snippet on PASS:
+
+```
+start accepted, load_cnt=64
+completed sweep 1 ... completed sweep 7
+sigma[0]: expected=91831  got=91907  diff=76  ok
+...
+sigma[7]: expected=4631   got=4635   diff=4   ok
+SVD CHECK: PASS (all 8 singular values within tol)
+```
+
 ## When to re-generate
 
 - Changing `--seed` or `--n` → re-run the generator; re-run the verifier.

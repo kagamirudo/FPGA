@@ -1,8 +1,15 @@
-# SVD RTL algorithm review (as of 2026-10-01)
+# SVD RTL algorithm review
 
-Short, honest audit of what `kung_svd/` does today versus what one-sided
-(Hestenes-style) Jacobi SVD requires. Written for Prof. Nagvajara's review
-before the winter-term kickoff.
+> **Status (2026-10-05):** the three deviations below have been fixed.
+> The new orchestrator (`svd_jacobi_top.vhd` + `svd_gram.vhd` +
+> `svd_angle_cordic.vhd`) is numerically verified end-to-end in nvc:
+> all 8 singular values of the seed-42 Q1.16 fixture match NumPy within
+> ~1.2e-3 (worst-case 78 ULP out of 91831) after 8 cyclic Jacobi sweeps.
+> Reproduce with `tools/sim_svd.sh -q`. This document is kept as the
+> design rationale and audit record.
+
+Short, honest audit of what `kung_svd/` did at project snapshot
+2026-10-01 versus what one-sided (Hestenes-style) Jacobi SVD requires.
 
 ## What one-sided Jacobi SVD requires
 

@@ -74,7 +74,8 @@ architecture rtl of svd_jacobi_top is
   );
   signal state : ctrl_state_t;
 
-  signal load_cnt  : integer range 0 to ROWS*COLS;
+  signal load_cnt      : integer range 0 to ROWS*COLS;
+  signal start_pending : std_logic;
   signal p_idx     : integer range 0 to COLS-1;
   signal q_idx     : integer range 0 to COLS-1;
   signal sweep_cnt : integer range 0 to SWEEPS;
@@ -160,8 +161,9 @@ begin
   begin
     if rising_edge(clk) then
       if rst_n = '0' then
-        state        <= LOAD_WAIT;
-        load_cnt     <= 0;
+        state         <= LOAD_WAIT;
+        load_cnt      <= 0;
+        start_pending <= '0';
         p_idx        <= 0;
         q_idx        <= 1;
         sweep_cnt    <= 0;
@@ -189,11 +191,20 @@ begin
               A(load_cnt / COLS, load_cnt mod COLS) <= din;
               load_cnt <= load_cnt + 1;
             end if;
-            if start = '1' and load_cnt >= ROWS*COLS then
-              sweep_cnt <= 0;
-              p_idx     <= 0;
-              q_idx     <= 1;
-              state     <= PAIR_PICK;
+            -- Latch start_pending so a start that races the final load
+            -- is not lost. Start the computation on the first cycle
+            -- after load_cnt reaches ROWS*COLS.
+            if start = '1' then
+              start_pending <= '1';
+            end if;
+            if (start = '1' or start_pending = '1') and load_cnt >= ROWS*COLS then
+              sweep_cnt     <= 0;
+              p_idx         <= 0;
+              q_idx         <= 1;
+              start_pending <= '0';
+              state         <= PAIR_PICK;
+              report "svd_jacobi_top: start accepted, load_cnt="
+                     & integer'image(load_cnt) severity note;
             end if;
 
           when PAIR_PICK =>

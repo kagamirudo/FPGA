@@ -135,7 +135,11 @@ begin
 
     case state is
       when IDLE =>
-        s_axis_tready_int <= '1'; -- Always ready to accept data in IDLE
+        -- Do NOT assert tready in IDLE: the orchestrator is only wired to
+        -- latch data when state = LOAD. If we handshake in IDLE, the word
+        -- is consumed by the TB but never reaches the core, so the first
+        -- matrix element is lost. Keep tready low until LOAD.
+        s_axis_tready_int <= '0';
         if s_axis_tvalid = '1' then
           n_state <= LOAD;
           report "AXI-Stream: Moving to LOAD state" severity note;
