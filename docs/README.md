@@ -12,6 +12,7 @@ Written artifacts for the MS thesis and the paper submission.
 | [`svd_algorithm_review.md`](svd_algorithm_review.md) | Honest audit of `kung_svd/` RTL against one-sided Jacobi SVD; names three specific deviations with VHDL line references and a fix table | Prof. Nagvajara (what to review before the meeting); future self (what to fix in winter term) |
 | [`related_work.md`](related_work.md) | Comparison table against Ma 2006, Ahmedsaid 2003, Wang 2014, Kalaycıoğlu 2019, UCSB 2020, DSB-Jacobi 2025 — "Ours" and "Vitis HLS baseline" rows blank, ready for post-P&R numbers | Paper results section |
 | [`scale_study.md`](scale_study.md) | nvc simulation at N ∈ {4, 8, 16}: cycle counts, max ULP diff, convergence verdict. N=4 and N=8 pass; N=16 fails due to cyclic-Jacobi slow-convergence on close singular values (documented, publishable) | Thesis evaluation chapter |
+| [`blv_grid_plan.md`](blv_grid_plan.md) | 5-session rollout plan to replace the current 1-PE serializer with a Brent-Luk-Van Loan (BLV) 2D grid (N/2 parallel pair pipelines) plus wider internal datapath. Target: ~25× speedup at N=16 and PASS at the same tolerance | Thesis Chapter 5 / future work |
 
 ## Rebuilding the proposal PDF
 

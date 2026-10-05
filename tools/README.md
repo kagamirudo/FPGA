@@ -89,6 +89,23 @@ sigma[7]: expected=4631   got=4635   diff=4   ok
 SVD CHECK: PASS (all 8 singular values within tol)
 ```
 
+## `round_robin_schedule.py`
+
+Generates and verifies the Brent-Luk-Van Loan parallel Jacobi
+schedule: `N-1` steps, each with `N/2` disjoint column pairs,
+covering every pair of columns exactly once. This is the schedule
+the planned BLV grid in [`../docs/blv_grid_plan.md`](../docs/blv_grid_plan.md)
+will consume.
+
+```bash
+.venv/bin/python tools/round_robin_schedule.py --n 8
+# or
+.venv/bin/python tools/round_robin_schedule.py --n 16
+```
+
+Prints the schedule plus a PASS/FAIL verifier (asserts disjointness
+within each step and exhaustiveness overall).
+
 ## When to re-generate
 
 - Changing `--seed` or `--n` → re-run the generator; re-run the verifier.
