@@ -64,9 +64,14 @@ brew install nvc    # macOS
 Usage:
 
 ```bash
-tools/sim_svd.sh          # full log
-tools/sim_svd.sh -q       # terse: start/sweep/sigma lines only
+tools/sim_svd.sh          # full log, n=8
+tools/sim_svd.sh -q       # terse: start/sweep/sigma/CYCLES lines only
+tools/sim_svd.sh -n 4 -q  # run at N=4 (regenerates .mem fixtures first)
+tools/sim_svd.sh -n 16 -q # run at N=16 (longer stop time, more sweeps)
 ```
+
+Supported N: 4, 8, 16 (any N would work; these are the ones in the
+scale study at [`../docs/scale_study.md`](../docs/scale_study.md)).
 
 The script analyzes every VHDL source and the testbench, elaborates
 `tb_svd_array`, runs to 300µs, and prints `SVD CHECK: PASS` on

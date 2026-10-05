@@ -27,10 +27,16 @@ The thesis proposal is in [docs/thesis_proposal.pdf](docs/thesis_proposal.pdf)
 
 - **LU 4×4** — simulated end-to-end, `A = L·U` reconstruction checked
   in software via `kung_lu_support/make run-sim`.
-- **SVD 8×8 RTL** — simulated end-to-end in nvc. All 8 singular values
-  match NumPy within ~1.2e-3 (max diff 78 ULP out of 91831 at the top
-  singular value) after 8 cyclic Jacobi sweeps on the seed-42 Q1.16
-  fixture. Reproduce with `tools/sim_svd.sh`. The three algorithmic
+- **SVD scale study** — simulated end-to-end in nvc at N ∈ {4, 8, 16}
+  with `SWEEPS = N`:
+  - **N = 4**: PASS, 1,159 cycles, max 13 ULP diff (2.4e-4 rel err).
+  - **N = 8**: PASS, 12,555 cycles, max 78 ULP diff (8.5e-4 rel err).
+  - **N = 16**: FAIL (3/16 within tol) — classic cyclic-Jacobi slow
+    convergence on close singular values. Documented in
+    [`docs/scale_study.md`](docs/scale_study.md) as a publishable
+    scaling-limit result, not a bug.
+
+  Reproduce with `tools/sim_svd.sh -n N -q`. The three algorithmic
   deviations identified in
   [`docs/svd_algorithm_review.md`](docs/svd_algorithm_review.md) have
   been fixed; the review doc now serves as the design rationale.

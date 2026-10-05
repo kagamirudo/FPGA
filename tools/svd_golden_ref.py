@@ -38,8 +38,12 @@ def from_q116(v: int) -> float:
 
 
 def gen_matrix(n: int, seed: int) -> np.ndarray:
+    # The top singular value of a random n x n matrix with entries ~ U(-s, s)
+    # grows as O(s * sqrt(n)). Scale the uniform range to keep the top sigma
+    # well inside Q1.16's (-2, 2) range at any n in [2, 32].
     rng = np.random.default_rng(seed)
-    A = rng.uniform(-0.5, 0.5, size=(n, n))
+    s = 0.5 / max(1.0, (n / 8.0) ** 0.5)
+    A = rng.uniform(-s, s, size=(n, n))
     Aq = np.array([[from_q116(to_q116(x)) for x in row] for row in A])
     return Aq
 

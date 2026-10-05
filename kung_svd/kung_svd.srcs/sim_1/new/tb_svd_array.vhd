@@ -28,11 +28,14 @@ library work;
 use work.svd_pkg.all;
 
 entity tb_svd_array is
+  generic (
+    N : integer := 8   -- matrix dimension; override with nvc -gN=4 / -gN=16
+  );
 end entity;
 
 architecture rtl of tb_svd_array is
-  constant ROWS_C     : integer := 8;
-  constant COLS_C     : integer := 8;
+  constant ROWS_C     : integer := N;
+  constant COLS_C     : integer := N;
   constant CLK_PERIOD : time    := 10 ns;
 
   signal aclk    : std_logic := '0';
@@ -48,11 +51,13 @@ architecture rtl of tb_svd_array is
   signal m_axis_tlast  : std_logic;
   signal m_axis_tready : std_logic := '1';
 
-  signal stim_done    : boolean := false;
-  signal recv_done    : boolean := false;
-  signal check_done   : boolean := false;
-  signal check_pass   : boolean := false;
-  signal timeout_fire : boolean := false;
+  signal stim_done     : boolean := false;
+  signal recv_done     : boolean := false;
+  signal check_done    : boolean := false;
+  signal check_pass    : boolean := false;
+  signal timeout_fire  : boolean := false;
+  signal compute_start : time    := 0 ns;
+  signal first_out     : time    := 0 ns;
 
   -- Storage for the drained matrix (row-major Q1.16 integers)
   type   int_arr_t is array (natural range <>) of integer;
@@ -147,7 +152,8 @@ begin
 
     s_axis_tvalid <= '0';
     s_axis_tlast  <= '0';
-    stim_done <= true;
+    stim_done     <= true;
+    compute_start <= now;
     wait;
   end process;
 
@@ -158,6 +164,9 @@ begin
   begin
     if rising_edge(aclk) then
       if m_axis_tvalid = '1' and m_axis_tready = '1' then
+        if recv_cnt = 0 then
+          first_out <= now;
+        end if;
         if recv_cnt < ROWS_C*COLS_C then
           drained(recv_cnt) <= to_integer(signed(m_axis_tdata));
           recv_cnt <= recv_cnt + 1;
@@ -246,8 +255,19 @@ begin
       writeline(output, l);
     end loop;
 
+    -- Cycle count: from end-of-stimulus to first output word.
+    write(l, string'("CYCLES n="));
+    write(l, N);
+    write(l, string'("  compute="));
+    write(l, (first_out - compute_start) / CLK_PERIOD);
+    write(l, string'("  cycles ("));
+    write(l, (first_out - compute_start) / 1 ns);
+    write(l, string'(" ns)"));
+    writeline(output, l);
+
     if passed then
-      report "SVD CHECK: PASS (all 8 singular values within tol)" severity note;
+      report "SVD CHECK: PASS (all " & integer'image(COLS_C)
+             & " singular values within tol)" severity note;
       check_pass <= true;
     else
       report "SVD CHECK: FAIL" severity failure;
@@ -261,8 +281,12 @@ begin
   -- Safety timeout
   ------------------------------------------------------------------
   timeout : process
+    -- Compute cost scales ~ sweeps * C(N,2) * N (gram+apply). 8 sweeps,
+    -- 10ns clock. 8 * N*(N-1)/2 * (2*N + 25) cycles * 10ns. Pad 4x.
+    constant TIMEOUT_LIMIT : time :=
+      10 us + 8 * N * (N - 1) * (2 * N + 25) * 10 ns * 2;
   begin
-    wait for 200 us;
+    wait for TIMEOUT_LIMIT;
     if not check_done then
       report "TB: timeout before check completed" severity failure;
       timeout_fire <= true;

@@ -56,7 +56,9 @@ begin
       DATA_W => DATA_W,
       ROWS   => ROWS,
       COLS   => COLS,
-      SWEEPS => 8
+      -- Cyclic Jacobi convergence: 8 sweeps at N=8, scales roughly linearly.
+      -- Empirical: N=16 needs ~16 sweeps to meet 2^-10 tolerance.
+      SWEEPS => COLS
     )
     port map (
       clk        => clk,
