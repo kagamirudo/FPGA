@@ -37,10 +37,12 @@ The thesis proposal is in [docs/thesis_proposal.pdf](docs/thesis_proposal.pdf)
     error is now at the Q1.16 precision floor; closing it needs a
     wider internal datapath. See
     [`docs/scale_study.md`](docs/scale_study.md).
-- **BLV grid** (`svd_jacobi_blv`, sessions 1-4 of
+- **BLV grid** (`svd_jacobi_blv`, sessions 1-5 of
   [`docs/blv_grid_plan.md`](docs/blv_grid_plan.md)) — N/2 parallel
   `svd_pair_pipeline` units running the round-robin schedule from
-  an auto-generated package. Scale study at N ∈ {4, 8, 16}:
+  an auto-generated package. Now the **default core** behind
+  `svd_array_core` via a `USE_BLV : boolean := true` generic that
+  chains through the AXI hierarchy. Scale study at N ∈ {4, 8, 16}:
 
   | N | Serializer | **BLV** | Speedup | Verdict |
   |---|---|---|---|---|
@@ -48,7 +50,9 @@ The thesis proposal is in [docs/thesis_proposal.pdf](docs/thesis_proposal.pdf)
   | 8 | 12,512 | **3,252** | **3.85×** | PASS |
   | 16 | 137,545 | **17,764** | **7.7×** | FAIL (precision floor) |
 
-  Reproduce: `tools/sim_blv.sh -n {4,8,16} -q`.
+  Reproduce either core through the AXI top with
+  `tools/sim_svd.sh -c {blv,serial} -n {4,8,16} -q`; the standalone
+  BLV TB is `tools/sim_blv.sh -n N -q`.
 
   Reproduce with `tools/sim_svd.sh -n N -q`. The three algorithmic
   deviations identified in

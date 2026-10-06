@@ -10,9 +10,10 @@ use work.svd_pkg.all;
 
 entity svd_array_top is
   generic (
-    ROWS   : integer := 8;
-    COLS   : integer := 8;
-    DATA_W : integer := DATA_WIDTH
+    ROWS    : integer := 8;
+    COLS    : integer := 8;
+    DATA_W  : integer := DATA_WIDTH;
+    USE_BLV : boolean := true
   );
   port (
     -- Global
@@ -38,9 +39,10 @@ begin
   -- Instantiate the AXI-Stream wrapper
   u_axi_stream : entity work.svd_axi_stream
     generic map(
-      ROWS   => ROWS,
-      COLS   => COLS,
-      DATA_W => DATA_W
+      ROWS    => ROWS,
+      COLS    => COLS,
+      DATA_W  => DATA_W,
+      USE_BLV => USE_BLV
     )
     port map
     (

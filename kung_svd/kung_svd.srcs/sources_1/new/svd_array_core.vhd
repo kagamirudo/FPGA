@@ -1,20 +1,19 @@
 ----------------------------------------------------------------------------
 -- svd_array_core.vhd
 --
--- Thin wrapper that exposes svd_jacobi_top under the pre-existing
--- `svd_array` entity name/port list, so svd_axi_stream and the Vivado
--- project continue to compile without edits.
+-- Thin wrapper that exposes either the BLV grid (`svd_jacobi_blv`,
+-- default) or the single-pair serializer (`svd_jacobi_top`) under the
+-- pre-existing `svd_array` entity name/port list. The AXI stream
+-- wrapper and the Vivado project continue to compile unchanged.
 --
--- The previous full-grid broadcast design (3 algorithmic deviations
--- from one-sided Jacobi SVD, see docs/svd_algorithm_review.md) has
--- been replaced. The new orchestrator uses:
+--   USE_BLV = true  (default): N/2 parallel pair pipelines running the
+--                              Brent-Luk-Van Loan round-robin schedule.
+--                              Numbers: 1.9x / 3.85x / 7.7x speedup at
+--                              N=4/8/16 vs. the serializer. See
+--                              docs/scale_study.md section 2.
 --
---   svd_gram          -> alpha, beta, gamma for a column pair
---   svd_angle_cordic  -> (cos theta, sin theta) with theta = (1/2) *
---                        atan2(2 gamma, alpha - beta)
---   svd_pe (reused)   -> one row of a 2-column Givens rotation
---
--- Status: UNTESTED. Requires GHDL or Vivado to verify numerically.
+--   USE_BLV = false:           Original 1-pipeline serializer; kept for
+--                              A/B comparison and regression gating.
 ----------------------------------------------------------------------------
 
 library IEEE;
@@ -24,9 +23,10 @@ use work.svd_pkg.all;
 
 entity svd_array is
   generic (
-    ROWS   : integer := 8;
-    COLS   : integer := 8;
-    DATA_W : integer := DATA_WIDTH
+    ROWS    : integer := 8;
+    COLS    : integer := 8;
+    DATA_W  : integer := DATA_WIDTH;
+    USE_BLV : boolean := true
   );
   port (
     clk        : in  std_logic;
@@ -51,29 +51,48 @@ end entity svd_array;
 
 architecture rtl of svd_array is
 begin
-  u_jacobi : entity work.svd_jacobi_top
-    generic map (
-      DATA_W => DATA_W,
-      ROWS   => ROWS,
-      COLS   => COLS,
-      -- Classical cyclic Jacobi needs ~N sweeps for quadratic
-      -- convergence. More sweeps actually HURT accuracy here because
-      -- each rotation injects ~2^-16 Q1.16-truncation noise and the
-      -- noise accumulates faster than the diagonal mass shrinks.
-      -- See docs/scale_study.md.
-      SWEEPS => COLS
-    )
-    port map (
-      clk        => clk,
-      rst_n      => rst_n,
-      din_valid  => din_valid,
-      din        => din,
-      start      => start,
-      done       => done,
-      dout_ready => dout_ready,
-      dout       => dout,
-      dout_valid => dout_valid,
-      dout_last  => dout_last
-    );
+  gen_blv : if USE_BLV generate
+    u_blv : entity work.svd_jacobi_blv
+      generic map (
+        DATA_W => DATA_W,
+        ROWS   => ROWS,
+        COLS   => COLS,
+        SWEEPS => COLS
+      )
+      port map (
+        clk        => clk,
+        rst_n      => rst_n,
+        din_valid  => din_valid,
+        din        => din,
+        start      => start,
+        done       => done,
+        dout_ready => dout_ready,
+        dout       => dout,
+        dout_valid => dout_valid,
+        dout_last  => dout_last
+      );
+  end generate;
+
+  gen_serial : if not USE_BLV generate
+    u_serial : entity work.svd_jacobi_top
+      generic map (
+        DATA_W => DATA_W,
+        ROWS   => ROWS,
+        COLS   => COLS,
+        SWEEPS => COLS
+      )
+      port map (
+        clk        => clk,
+        rst_n      => rst_n,
+        din_valid  => din_valid,
+        din        => din,
+        start      => start,
+        done       => done,
+        dout_ready => dout_ready,
+        dout       => dout,
+        dout_valid => dout_valid,
+        dout_last  => dout_last
+      );
+  end generate;
   -- din_last is unused; the orchestrator counts words internally.
 end architecture rtl;

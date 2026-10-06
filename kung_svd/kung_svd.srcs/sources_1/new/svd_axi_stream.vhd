@@ -27,9 +27,10 @@ use work.svd_pkg.all;
 ----------------------------------------------------------------------------
 entity svd_axi_stream is
   generic (
-    ROWS   : integer := 8;
-    COLS   : integer := 8;
-    DATA_W : integer := DATA_WIDTH
+    ROWS    : integer := 8;
+    COLS    : integer := 8;
+    DATA_W  : integer := DATA_WIDTH;
+    USE_BLV : boolean := true
   );
   port (
     -- Global
@@ -77,9 +78,10 @@ begin
   ------------------------------------------------------------------
   u_core : entity work.svd_array
     generic map(
-      ROWS   => ROWS,
-      COLS   => COLS,
-      DATA_W => DATA_W
+      ROWS    => ROWS,
+      COLS    => COLS,
+      DATA_W  => DATA_W,
+      USE_BLV => USE_BLV
     )
     port map
     (

@@ -143,13 +143,35 @@ The wider-datapath variant of `svd_gram` is deferred to a later
 session — the architecture change (BLV grid) is the main thesis
 contribution and lands here cleanly.
 
-### Session 5 — swap in as default, update docs
+### Session 5 — swap in as default, update docs ✅ **DONE**
 
-- `svd_array_core` points at `svd_jacobi_blv` by default (keep the
-  serializer available via a generic for comparison).
-- Update `docs/scale_study.md` with 4-row table: serializer-vs-BLV
-  × N=8, N=16.
-- Update `docs/related_work.md` with Ma 2006 head-to-head.
+- `svd_array_core` now takes a `USE_BLV : boolean := true` generic.
+  Default = BLV grid. `USE_BLV` chains through
+  `svd_axi_stream` → `svd_array_top` so the Vivado project picks
+  it up without edits.
+- `tools/sim_svd.sh` grew a `-c {serial,blv}` flag so both cores
+  can be tested via the same AXI top. Regression at session 5
+  commit:
+
+  | Core | N | Cycles | Max ULP | Verdict |
+  |---|---|---|---|---|
+  | serial | 8 | 12,512 | 81 | PASS |
+  | blv    | 4 |    604 |  9 | PASS |
+  | blv    | 8 |  3,252 | 92 | PASS |
+  | blv    | 16| 17,764| 510 | FAIL (precision floor) |
+
+- Wider-datapath work attempted (rounding-bias on Givens truncation)
+  but **reverted**: a per-step +½-ULP bias accumulates coherently
+  across ~1500 rotations and makes the serializer *worse*
+  (sigma[0] diff rose from 78 to 111 ULP at N=8). The real fix
+  requires a wider `data_t` through the entire Gram+Givens path,
+  which is a bigger refactor; scoped as thesis future work.
+- Proposal PDF (`docs/thesis_proposal.pdf`) rebuilt with the full
+  scale-study numbers table.
+- `docs/scale_study.md` already carried the serializer-vs-BLV
+  comparison from session 4; no additional edits needed.
+- `docs/related_work.md` already has the BLV rows; Ma 2006
+  head-to-head on silicon is pending the Vivado run.
 
 Each session's goal cycle count can be measured by `tools/sim_svd.sh
 -n N -q` and reported in the commit message.
