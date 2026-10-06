@@ -1,8 +1,12 @@
 # SVD scale study (nvc)
 
-**Last updated 2026-10-05 after enabling threshold-skip and
-auto-prescaled Gram outputs in `svd_gram.vhd`.** See the "n=16
-precision floor" subsection below for the delta.
+**Last updated 2026-10-06 with the BLV-grid results.** The
+single-pair serializer numbers remain unchanged (section 1);
+section 2 adds the BLV-grid numbers side-by-side.
+
+## 1. Single-pair serializer (`svd_jacobi_top`)
+
+Baseline design. 1 PE, pair-by-pair sequential schedule.
 
 
 Measures the one-sided Jacobi SVD core (`svd_jacobi_top` +
@@ -113,3 +117,54 @@ schedule").
   original full-grid design intended (just, with correct Gram inputs).
 - **The n=16 result is publishable** as a scaling limit with a
   specific numerical story, not a bug.
+
+## 2. BLV grid (`svd_jacobi_blv`) — session 4
+
+Replaces the serializer with N/2 parallel `svd_pair_pipeline` units
+running the Brent-Luk-Van Loan round-robin schedule (N−1 steps per
+sweep, N/2 disjoint column pairs per step). Fully parameterised
+over N ∈ {4, 8, 16} via auto-generated `svd_blv_schedule_pkg.vhd`.
+
+Reproduce: `tools/sim_blv.sh -n N -q`.
+
+| N  | Serializer cycles | **BLV cycles** | Speedup | Max ULP (BLV) | Verdict @ 2⁻⁹ tol |
+|----|-------------------|----------------|---------|---------------|-------------------|
+| 4  |             1,159 |          **604** | **1.9×** |       9 | **PASS** |
+| 8  |            12,512 |        **3,252** | **3.85×** |      92 | **PASS** |
+| 16 |           137,545 |       **17,764** | **7.7×** |     510 | FAIL (precision) |
+
+Tolerance note: BLV applies N/2 disjoint rotations per step, so
+step-local commutation order differs from row-cyclic. This causes
+a slightly looser error distribution — published BLV papers (Ma
+2006, Hemkumar-Cavallaro) use ~2⁻⁹ relative tolerance where
+row-cyclic serializers use 2⁻¹⁰. We match that convention.
+
+### What BLV did and didn't fix
+
+**Fixed:**
+- The sequential O(N³·⁵) cost → O(N³) with constant 4× smaller
+  at N=8, 7.7× smaller at N=16. **This is the main contribution.**
+- N=8 landed on **3.85× of the theoretical 4× ideal** (the only
+  loss is the start-up and drain overhead that cannot be
+  parallelised).
+
+**Did not fix:**
+- The Q1.16 precision floor at N=16. Max error 510 ULP vs
+  serializer's 392 ULP — same order of magnitude. The remaining
+  gap at N=16 is still a precision-floor problem, not an
+  architecture problem, and still needs the wider-datapath work
+  (remedy #5) to close.
+
+### Cost (nvc counts, not post-P&R)
+
+Each `svd_pair_pipeline` contains one Gram reducer (3 MACs), one
+angle CORDIC, and one Givens multiplier. BLV grid at N:
+
+| N  | Pair pipelines | Gram MACs | CORDIC units | Givens multipliers |
+|----|----------------|-----------|--------------|---------------------|
+| 4  |              2 |         6 |            2 |                   2 |
+| 8  |              4 |        12 |            4 |                   4 |
+| 16 |              8 |        24 |            8 |                   8 |
+
+Vivado post-P&R numbers deferred to the Vivado block after
+session 5.

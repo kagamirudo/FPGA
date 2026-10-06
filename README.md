@@ -37,13 +37,18 @@ The thesis proposal is in [docs/thesis_proposal.pdf](docs/thesis_proposal.pdf)
     error is now at the Q1.16 precision floor; closing it needs a
     wider internal datapath. See
     [`docs/scale_study.md`](docs/scale_study.md).
-- **Next architecture step** — Brent-Luk-Van Loan 2D grid with
-  N/2 parallel pair pipelines, documented in
-  [`docs/blv_grid_plan.md`](docs/blv_grid_plan.md). Rolls out over
-  5 sessions, each self-contained. Target: ~25× speedup at N=16
-  plus PASS at the same tolerance. Round-robin schedule generator
-  landed in [`tools/round_robin_schedule.py`](tools/round_robin_schedule.py)
-  as session 1.
+- **BLV grid** (`svd_jacobi_blv`, sessions 1-4 of
+  [`docs/blv_grid_plan.md`](docs/blv_grid_plan.md)) — N/2 parallel
+  `svd_pair_pipeline` units running the round-robin schedule from
+  an auto-generated package. Scale study at N ∈ {4, 8, 16}:
+
+  | N | Serializer | **BLV** | Speedup | Verdict |
+  |---|---|---|---|---|
+  | 4 |  1,159 |   **604** |  **1.9×** | PASS |
+  | 8 | 12,512 | **3,252** | **3.85×** | PASS |
+  | 16 | 137,545 | **17,764** | **7.7×** | FAIL (precision floor) |
+
+  Reproduce: `tools/sim_blv.sh -n {4,8,16} -q`.
 
   Reproduce with `tools/sim_svd.sh -n N -q`. The three algorithmic
   deviations identified in

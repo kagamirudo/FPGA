@@ -16,9 +16,12 @@ runs land in weeks 1-12 of the plan.
 | Kalaycıoğlu 2019 | 2-sided Jacobi, cyclic 2×2 | Xilinx Zynq-7020 | up to 128×128 | 16/32-bit fixed | — | — | — | — | — | 8.5×–15.3× vs. MATLAB; 2.1×–6.3× vs. GPU for 8×8–128×128 | [Kalaycıoğlu 2019](https://doi.org/10.1109/INISTA.2019.8778279) |
 | UCSB (Liu et al.) ISQED 2020 | Jacobi, Maximum Data Sharing ordering | Xilinx VCU118 (VU9P) | up to 2048×2048 | single FP | — | — | — | — | — | up to 300× vs. Eigen on CPU | [UCSB 2020](https://web.ece.ucsb.edu/~lip/publications/FPGA-SVD-IEEE-ISQED2020.pdf) |
 | DSB-Jacobi (arXiv 2025) | Data-Stream Jacobi, streaming | Xilinx Zynq UltraScale+ | large stream matrices | — | — | — | **−41.5%** vs prior | — | — | 23× throughput vs prior | [arXiv:2511.12461](https://arxiv.org/abs/2511.12461) |
-| **Ours (nvc sim, PASS)** | 1-sided Jacobi, register-file + Gram+CORDIC+Givens | nvc 1.23 (functional) | 4×4 | 18-bit Q1.16 | — | — | — | — | — | **1,159 cycles** (max 13 ULP err) | this repo |
-| **Ours (nvc sim, PASS)** | 1-sided Jacobi, register-file + Gram+CORDIC+Givens | nvc 1.23 (functional) | 8×8 | 18-bit Q1.16 | — | — | — | — | — | **12,555 cycles** (max 78 ULP err) | this repo |
-| **Ours (target, P&R)** | 1-sided Jacobi, compiler-emitted nearest-neighbor AXI mesh | Xilinx Kintex-7 (XC7K325T) | 4×4, 8×8 | 18-bit Q1.16 | TBD | TBD | TBD | TBD | TBD | TBD | — |
+| **Ours serializer (nvc, PASS)** | 1-sided Jacobi, 1 pair-pipeline | nvc 1.23 (functional) | 4×4 | 18-bit Q1.16 | — | — | — | — | — | **1,159 cycles** (max 13 ULP) | this repo |
+| **Ours serializer (nvc, PASS)** | 1-sided Jacobi, 1 pair-pipeline | nvc 1.23 (functional) | 8×8 | 18-bit Q1.16 | — | — | — | — | — | **12,512 cycles** (max 81 ULP) | this repo |
+| **Ours BLV grid (nvc, PASS)** | 1-sided BLV, N/2 pair-pipelines parallel | nvc 1.23 (functional) | 4×4 | 18-bit Q1.16 | — | — | — | — | — | **604 cycles** (max 9 ULP) | this repo |
+| **Ours BLV grid (nvc, PASS)** | 1-sided BLV, N/2 pair-pipelines parallel | nvc 1.23 (functional) | 8×8 | 18-bit Q1.16 | — | — | — | — | — | **3,252 cycles** (max 92 ULP) | this repo |
+| **Ours BLV grid (nvc, PASS)** | 1-sided BLV, N/2 pair-pipelines parallel | nvc 1.23 (functional) | 16×16 | 18-bit Q1.16 | — | — | — | — | — | **17,764 cycles** (max 510 ULP) | this repo |
+| **Ours (target, P&R)** | 1-sided BLV, compiler-emitted nearest-neighbor AXI mesh | Xilinx Kintex-7 (XC7K325T) | 4×4, 8×8, 16×16 | 18-bit Q1.16 | TBD | TBD | TBD | TBD | TBD | TBD | — |
 | **Vitis HLS baseline (same C)** | one-sided Jacobi reference | Xilinx Kintex-7 (XC7K325T) | 4×4, 8×8 | 18-bit Q1.16 | TBD | TBD | TBD | TBD | TBD | TBD | — |
 
 ## Positioning notes
