@@ -45,8 +45,10 @@ mkdir -p "$BUILD"
 cd "$BUILD"
 rm -rf work
 
-"$ROOT/.venv/bin/python" "$ROOT/tools/gen_blv_schedule_pkg.py" > /dev/null
-"$ROOT/.venv/bin/python" "$ROOT/tools/svd_golden_ref.py" --n "$N" > /dev/null
+PY="$ROOT/.venv/bin/python"
+if [[ ! -x "$PY" ]]; then PY="$(command -v python3)"; fi
+"$PY" "$ROOT/tools/gen_blv_schedule_pkg.py" > /dev/null
+"$PY" "$ROOT/tools/svd_golden_ref.py" --n "$N" > /dev/null
 
 cp "$SIM/svd_input.mem" .
 cp "$SIM/svd_sigma.mem" .

@@ -25,6 +25,19 @@ vivado -mode batch -source test_sim.tcl       # short sim
 vivado -mode batch -source run_long_sim.tcl   # full sim
 ```
 
+## IP pack → Zynq system → Vitis
+
+32-bit DMA wrapper: [`kung_svd.srcs/sources_1/new/svd_array_axis32.vhd`](kung_svd.srcs/sources_1/new/svd_array_axis32.vhd).
+
+```bash
+# From repo root (Vivado on PATH):
+./scripts/build_svd_system.sh    # packages IP, BD @ 25 MHz, bitgen, XSA
+# → build/svd_system/svd_system.xsa
+```
+
+Vitis C compare app (HW DMA vs pure-C Jacobi): see
+[`../kung_svd_support/README.md`](../kung_svd_support/README.md).
+
 ## File map
 
 ```

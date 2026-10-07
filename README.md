@@ -19,6 +19,8 @@ The thesis proposal is in [docs/thesis_proposal.pdf](docs/thesis_proposal.pdf)
 | [`kung_lu_decom/`](kung_lu_decom/) | Vivado project — Kung-style 4×4 LU on an AXI4-Stream PE mesh (VHDL) | [`kung_lu_decom/README.md`](kung_lu_decom/README.md) |
 | [`kung_lu_support/`](kung_lu_support/) | Portable C library + harness that generates stimulus, extracts L/U, and verifies A = L·U | [`kung_lu_support/README.md`](kung_lu_support/README.md) |
 | [`kung_svd/`](kung_svd/) | Vivado project — 8×8 one-sided Jacobi SVD. Numerically verified end-to-end in nvc against NumPy golden reference. | [`kung_svd/README.md`](kung_svd/README.md) |
+| [`kung_svd_support/`](kung_svd_support/) | Pure-C Jacobi reference + Vitis AXI-DMA app comparing HW vs SW σ | [`kung_svd_support/README.md`](kung_svd_support/README.md) |
+| [`scripts/`](scripts/) | Vivado bootstrap, SVD IP pack, Zynq system → XSA | [`scripts/README.md`](scripts/README.md) |
 | [`tools/`](tools/) | Python support scripts (Q1.16 golden-reference generator, verifier) | [`tools/README.md`](tools/README.md) |
 | [`docs/`](docs/) | Thesis proposal, algorithm review, related-work table | [`docs/README.md`](docs/README.md) |
 | [`archive/`](archive/) | Superseded week-01 prototypes, kept for reference | — |
